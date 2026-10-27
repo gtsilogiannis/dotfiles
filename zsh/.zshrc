@@ -1,0 +1,34 @@
+# Fastfetch every session.
+[[ -z "$ZED_TERM" ]] && fastfetch
+
+# Starship Prompt.
+eval "$(starship init zsh)"
+
+# Aliases.
+alias c="clear"
+alias ls="ls --color=auto"
+alias grep="grep --color=auto"
+alias v="micro"
+alias sv="sudo micro"
+
+# Auto-refresh Waybar package counter after update.
+alias up='yay && pkill -SIGRTMIN+8 waybar'
+
+
+# Full system cleanup.
+alias sysclean='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null; sudo paccache -rk1; sudo paccache -ruk0; yay -Sc --aur --noconfirm; sudo journalctl --vacuum-size=50M; rm -rf ~/.cache/thumbnails/* ~/.local/share/Trash/*; echo "System Cleaned Successfully"'
+
+
+# FPL RUNNER
+alias fpl='cd ~/FPL && source venv/bin/activate'
+
+# Show the active venv in the right prompt (RPROMPT)
+setopt prompt_subst
+show_virtual_env() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "(%F{cyan}$(basename "$VIRTUAL_ENV")%f) "
+    fi
+}
+RPROMPT='$(show_virtual_env)'
+export PATH="$HOME/.local/bin:$PATH"
+setopt interactive_comments

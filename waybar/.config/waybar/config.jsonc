@@ -1,0 +1,119 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "margin-top": 6,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 4,
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "mpris",
+        "clock"
+    ],
+    "modules-right": [
+        "custom/updates",
+        "temperature",
+        "cpu",
+        "memory",
+        "pulseaudio",
+        "custom/notification",
+        "tray"
+    ],
+
+    // --- Left Modules ---
+
+    "hyprland/workspaces": {
+        "format": "{id}"
+    },
+
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 30
+    },
+
+    // --- Center Modules ---
+
+    "mpris": {
+        "format": "SPOTIFY: {player_icon} {dynamic}",
+        "format-paused": "SPOTIFY: {status_icon} <i>{dynamic}</i>",
+        "format-stopped": "",
+        "player-icons": {
+            "default": "▶",
+            "spotify": "▶"
+        },
+        "status-icons": {
+            "paused": "⏸"
+        },
+        "dynamic-order": ["artist", "title"],
+        "dynamic-separator": " - ",
+        "dynamic-len": 32,
+        "ignored-players": ["firefox", "zen"]
+    },
+
+    "clock": {
+        "format": "{:%H:%M  |  %d/%m/%Y}"
+    },
+
+    // --- Right Modules ---
+
+    "custom/updates": {
+        "format": "PKG {}",
+        "exec": "(checkupdates 2>/dev/null; yay -Qum 2>/dev/null) | wc -l",
+        "interval": 600,
+        "signal": 8,
+        "on-click": "pkill -SIGRTMIN+8 waybar"
+    },
+
+    "temperature": {
+            "hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+            "critical-threshold": 80,
+            "format": "TEMP {temperatureC}°C",
+            "interval": 2
+        },
+
+    "cpu": {
+        "format": "CPU {usage}%",
+        "interval": 2
+    },
+
+    "memory": {
+        "format": "RAM {percentage}%",
+        "interval": 2
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL MUTE",
+        "on-click": "bash -c ~/.config/waybar/scripts/volume-menu.sh",
+        "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+         "scroll-step": 5
+    },
+
+    "custom/notification": {
+        "tooltip": false,
+        "format": "NOTIF {icon}",
+        "format-icons": {
+            "notification": "●",
+            "none": "○",
+            "dnd-notification": "[DND]",
+            "dnd-none": "[DND]"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}

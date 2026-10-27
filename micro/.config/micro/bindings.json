@@ -1,0 +1,7 @@
+{
+    "Ctrl-c": "Copy",
+    "Ctrl-v": "Paste",
+    "Ctrl-x": "Cut",
+    "Ctrl-q": "Quit",
+    "Ctrl-s": "Save"
+}

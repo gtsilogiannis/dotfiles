@@ -1,0 +1,245 @@
+------------------
+---- MONITORS ----
+------------------
+
+hl.monitor({
+    output   = "eDP-1",
+    mode     = "1920x1080@144",
+    position = "auto",
+    scale    = "1",
+    vrr      = 0,
+})
+
+hl.monitor({
+    output   = "HDMI-A-1",
+    mode     = "1920x1080@144",
+    position = "auto-right",
+    scale    = "1",
+    
+})
+
+--------------------------
+---- DEFAULT PROGRAMS ----
+--------------------------
+
+local terminal    = "kitty"
+local fileManager = "thunar"
+local menu        = "rofi -show drun -show-icons"
+local browser     = "firefox"
+
+-------------------
+---- AUTOSTART ----
+-------------------
+
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent &")
+    hl.exec_cmd("awww-daemon --format xrgb &")
+    hl.exec_cmd("sleep 1 && awww img ~/.cache/current_wallpaper.png &")
+    hl.exec_cmd("waybar &")
+    hl.exec_cmd("hypridle &")
+    hl.exec_cmd("nm-applet --indicator &")
+    hl.exec_cmd("wl-paste --type text --watch cliphist store &")
+    hl.exec_cmd("wl-paste --type image --watch cliphist store &")
+end)
+
+-------------------------------
+---- ENVIRONMENT VARIABLES ----
+-------------------------------
+
+hl.env("MOZ_ENABLE_WAYLAND", "1")
+hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_SIZE", "24")
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("XDG_SESSION_TYPE", "wayland")
+hl.env("GBM_BACKEND", "nvidia-drm")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+
+-----------------------
+---- LOOK AND FEEL ----
+-----------------------
+
+hl.config({
+    general = {
+        gaps_in  = 5,
+        gaps_out = 14,
+        border_size = 2,
+
+        col = {
+            active_border   = { colors = {"rgba(00f5ffcc)", "rgba(ff007fcc)"}, angle = 45 },
+            inactive_border = "rgba(24273aaa)",
+        },
+
+        resize_on_border = true,
+        allow_tearing    = false,
+        layout           = "dwindle",
+    },
+
+    decoration = {
+        rounding        = 10,
+        rounding_power  = 2,
+
+        active_opacity   = 0.97,
+        inactive_opacity = 0.88,
+
+        shadow = {
+            enabled      = true,
+            range        = 14,
+            render_power = 2,
+            color        = 0x40000000,
+        },
+
+        blur = {
+            enabled           = true,
+            size              = 5,
+            passes            = 2,
+            new_optimizations = true,
+            vibrancy          = 0.15,
+            ignore_opacity    = false,
+        },
+    },
+
+    misc = {
+        force_default_wallpaper = 2,
+        disable_hyprland_logo   = true,
+        vrr = 0,
+
+    },
+
+    cursor = {
+    	no_hardware_cursors = true,
+    	enable_hyprcursor = true,
+    	sync_gsettings_theme = true,	
+    },
+
+     layerrule = {
+            "blur, swaync-control-center",
+            "blur, swaync-notification-window",
+            "ignorezero, swaync-control-center",
+            "ignorezero, swaync-notification-window",
+     },
+})
+
+--------------------
+---- ANIMATIONS ----
+--------------------
+
+hl.curve("wind",   { type = "bezier", points = { {0.05, 0.9}, {0.1, 1.05} } })
+hl.curve("winIn",  { type = "bezier", points = { {0.1, 1.1},  {0.1, 1.05} } })
+hl.curve("winOut", { type = "bezier", points = { {0.3, -0.3}, {0, 1} } })
+hl.curve("liner",  { type = "bezier", points = { {0, 0},      {1, 1} } })
+
+hl.animation({ leaf = "windows",     enabled = true, speed = 6,  bezier = "wind",   style = "popin" })
+hl.animation({ leaf = "windowsIn",   enabled = true, speed = 6,  bezier = "winIn",  style = "popin 80%" })
+hl.animation({ leaf = "windowsOut",  enabled = true, speed = 5,  bezier = "winOut", style = "popin 80%" })
+hl.animation({ leaf = "windowsMove", enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
+hl.animation({ leaf = "border",      enabled = true, speed = 1,  bezier = "liner" })
+hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner",  style = "loop" })
+hl.animation({ leaf = "fade",        enabled = true, speed = 4,  bezier = "default" })
+hl.animation({ leaf = "workspaces",  enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
+
+hl.config({
+    dwindle = {
+        preserve_split = true,
+    },
+})
+
+---------------
+---- INPUT ----
+---------------
+
+hl.config({
+    input = {
+        kb_layout  = "us,gr",
+        kb_variant = "",
+        kb_model   = "",
+        kb_options = "grp:alt_shift_toggle",
+        kb_rules   = "",
+
+        follow_mouse = 1,
+        sensitivity  = 0,
+        scroll_factor = 1.0,
+
+        touchpad = {
+            natural_scroll = true,
+        },
+    },
+})
+
+---------------------
+---- KEYBINDINGS ----
+---------------------
+
+local mainMod = "SUPER"
+
+-- Core Apps & Management
+hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
+hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + SPACE",  hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd(browser))
+hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
+hl.bind(mainMod .. " + M",      hl.dsp.exit())
+
+-- Screenshots (grim + slurp + swappy) + Lock Screen + Alt F4
+
+-- Win + S: Full Screen
+hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("grim - | wl-copy --type image/png"))
+-- Win + Shift + S: User Defined
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy --type image/png"))
+hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind("ALT + F4", hl.dsp.exec_cmd("~/.config/rofi/powermenu.sh"))
+
+-- Focus with Arrow Keys
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+
+-- Wallpaper Changing
+hl.bind("SUPER + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/WallpaperSelect.sh"))
+
+-- Workspaces Navigation & Window Moving
+for i = 1, 10 do
+    local key = i % 10
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+end
+
+-- Mouse Dragging & Resizing
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Hardware / Media Keys
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
+hl.bind("XF86AudioNext",        hl.dsp.exec_cmd("playerctl next"),                                 { locked = true })
+hl.bind("XF86AudioPlay",        hl.dsp.exec_cmd("playerctl play-pause"),                            { locked = true })
+hl.bind("XF86AudioPrev",        hl.dsp.exec_cmd("playerctl previous"),                             { locked = true })
+
+----------------------
+---- WINDOW RULES ----
+----------------------
+
+hl.window_rule({
+    name  = "suppress-maximize-events",
+    match = { class = ".*" },
+    suppress_event = "maximize",
+})
+
+hl.window_rule({
+    name  = "fix-xwayland-drags",
+    match = {
+        class    = "^$",
+        title    = "^$",
+        xwayland = true,
+        float    = true,
+    },
+    no_focus = true,
+})
+

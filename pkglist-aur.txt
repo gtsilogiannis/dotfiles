@@ -1,0 +1,5 @@
+onlyoffice-bin
+pomotroid-bin
+sddm-astronaut-theme
+vesktop-bin
+yay

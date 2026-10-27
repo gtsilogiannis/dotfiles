@@ -1,0 +1,11 @@
+{
+    "clipboard": "terminal",
+    "colorscheme": "simple",
+    "cursorline": true,
+    "mouse": true,
+    "saveundo": true,
+    "scrollbar": false,
+    "softwrap": true,
+    "tabsize": 4,
+    "tabstospaces": true
+}

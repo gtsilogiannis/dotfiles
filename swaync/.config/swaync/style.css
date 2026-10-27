@@ -1,0 +1,77 @@
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* Notification Center panel */
+.control-center {
+    background: rgba(17, 17, 27, 0.75);
+    border: 1px solid rgba(69, 71, 90, 0.45);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 10px;
+    color: #cdd6f4;
+}
+
+/* Individual notifications (popups and history) */
+.notification-row {
+    outline: none;
+    margin: 6px 0;
+}
+
+.notification {
+    background: rgba(30, 30, 46, 0.70);
+    border: 1px solid rgba(69, 71, 90, 0.4);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #cdd6f4;
+}
+
+.notification-content {
+    background: transparent;
+    padding: 4px;
+}
+
+.close-button {
+    background: rgba(243, 139, 168, 0.2);
+    color: #f38ba8;
+    border-radius: 6px;
+    padding: 2px 6px;
+}
+
+.close-button:hover {
+    background: rgba(243, 139, 168, 0.5);
+}
+
+/* Widgets: Do Not Disturb Button, Clear All, Sliders */
+.widget-title {
+    color: #89b4fa;
+    margin: 8px;
+    font-size: 1.1rem;
+}
+
+.widget-title > button {
+    background: rgba(30, 30, 46, 0.7);
+    color: #cdd6f4;
+    border: 1px solid rgba(69, 71, 90, 0.4);
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.widget-dnd {
+    background: rgba(30, 30, 46, 0.7);
+    border: 1px solid rgba(69, 71, 90, 0.4);
+    border-radius: 8px;
+    margin: 8px 0;
+    padding: 6px 10px;
+}
+
+.widget-dnd > switch {
+    background: rgba(49, 50, 68, 0.8);
+    border-radius: 8px;
+}
+
+.widget-dnd > switch:checked {
+    background: #89b4fa;
+}
