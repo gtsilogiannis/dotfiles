@@ -31,4 +31,5 @@ show_virtual_env() {
 }
 RPROMPT='$(show_virtual_env)'
 export PATH="$HOME/.local/bin:$PATH"
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 setopt interactive_comments
