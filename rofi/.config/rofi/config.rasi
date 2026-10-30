@@ -7,59 +7,70 @@ configuration {
 }
 
 @theme "/dev/null"
+/* Colors come from matugen (colors.rasi, generated, not tracked). */
+@import "~/.config/rofi/colors.rasi"
 
 * {
-    bg: #11111b;
-    fg: #cdd6f4;
-    accent: #89b4fa;
-    selected-bg: #313244;
     background-color: transparent;
-    text-color: @fg;
+    text-color: @on-surface;
     margin: 0;
     padding: 0;
 }
 
 window {
-    background-color: @bg;
-    border: 2px;
-    border-color: @accent;
-    border-radius: 12px;
-    width: 460px;
-    padding: 16px;
+    background-color: @surface;
+    border: 1px;
+    border-color: @outline-variant;
+    border-radius: 16px;
+    width: 560px;
+    padding: 18px;
 }
 
 inputbar {
     children: [ prompt, entry ];
+    background-color: @surface-container;
+    border-radius: 10px;
+    padding: 6px;
     margin: 0 0 12px 0;
 }
 
 prompt {
-    padding: 6px 12px;
-    background-color: @accent;
-    text-color: #11111b;
+    padding: 4px 10px;
+    background-color: @primary;
+    text-color: @on-primary;
     border-radius: 6px;
     margin: 0 8px 0 0;
 }
 
 entry {
-    padding: 6px;
-    text-color: @fg;
+    padding: 4px;
     placeholder: "Search apps...";
-    placeholder-color: #585b70;
+    placeholder-color: @on-surface-variant;
 }
 
 listview {
-    lines: 7;
+    lines: 8;
     columns: 1;
     spacing: 4px;
 }
 
 element {
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 element selected {
-    background-color: @selected-bg;
-    text-color: @accent;
+    background-color: @primary-container;
+    text-color: @on-primary-container;
+}
+
+element-icon {
+    size: 22px;
+    margin: 0 10px 0 0;
+    background-color: transparent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
 }
