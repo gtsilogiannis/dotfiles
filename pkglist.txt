@@ -5,6 +5,7 @@ awww
 base
 base-devel
 bear
+bluetui
 bluez
 bluez-utils
 brightnessctl
@@ -12,6 +13,7 @@ btop
 clang
 cliphist
 cmake
+cmatrix
 dosfstools
 efibootmgr
 egl-wayland
@@ -39,7 +41,9 @@ linux
 linux-firmware
 linux-headers
 loupe
+matugen
 micro
+neovim
 network-manager-applet
 networkmanager
 nmap
@@ -85,3 +89,5 @@ zed
 zip
 zram-generator
 zsh
+zsh-autosuggestions
+zsh-syntax-highlighting

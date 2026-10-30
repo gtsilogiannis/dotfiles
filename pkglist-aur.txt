@@ -1,3 +1,4 @@
+mpvpaper
 onlyoffice-bin
 pomotroid-bin
 sddm-astronaut-theme
