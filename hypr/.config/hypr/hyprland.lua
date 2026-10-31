@@ -132,7 +132,7 @@ hl.config({
 
 -- Blur behind the bar, the launcher and the notifications.
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
-for _, namespace in ipairs({ "waybar", "rofi", "swaync-control-center", "swaync-notification-window" }) do
+for _, namespace in ipairs({ "waybar", "quickshell-bar", "rofi", "swaync-control-center", "swaync-notification-window" }) do
     hl.layer_rule({
         name         = "blur-" .. namespace,
         match        = { namespace = "^" .. namespace .. "$" },
