@@ -1,3 +1,4 @@
+bibata-cursor-theme-bin
 mpvpaper
 onlyoffice-bin
 pomotroid-bin
