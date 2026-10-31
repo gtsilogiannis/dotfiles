@@ -27,6 +27,10 @@ output_path = '~/.config/rofi/colors.rasi'
 input_path = '~/.config/matugen/templates/kitty.conf'
 output_path = '~/.config/kitty/colors.conf'
 
+[templates.quickshell]
+input_path = '~/.config/matugen/templates/quickshell.json'
+output_path = '~/.config/quickshell/colors.json'
+
 [templates.gtk3]
 input_path = '~/.config/matugen/templates/gtk.css'
 output_path = '~/.config/gtk-3.0/colors.css'
