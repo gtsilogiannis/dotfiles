@@ -69,6 +69,6 @@ RowLayout {
     Stat {
         icon: "power_settings_new"
         accent: Theme.error
-        onClicked: Quickshell.execDetached([Quickshell.env("HOME") + "/.config/rofi/powermenu.sh"])
+        onClicked: MenuState.toggle("power")
     }
 }

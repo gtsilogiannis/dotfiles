@@ -19,4 +19,6 @@ ShellRoot {
 
     // Menus: one at a time, switched through MenuState (qs ipc call menu toggle <name>).
     Launcher {}
+    Clipboard {}
+    PowerMenu {}
 }
