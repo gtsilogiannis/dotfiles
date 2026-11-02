@@ -15,10 +15,16 @@ Singleton {
         return e?.name || appId || "";
     }
 
+    // Theme icon of the app: the entry's Icon=, then the app id as given and in lowercase.
+    // Returns "" when none exists, so callers can draw a glyph instead of the missing texture.
     function icon(appId) {
         const e = entry(appId);
-        // Falls back to the generic icon when neither the entry nor the app id names a theme icon.
-        return Quickshell.iconPath(e?.icon || appId || "", "application-x-executable");
+        for (const name of [e?.icon, appId, appId?.toLowerCase()]) {
+            if (!name) continue;
+            const path = Quickshell.iconPath(name, true);
+            if (path !== "") return path;
+        }
+        return "";
     }
 
     // App id of a Hyprland window: the Wayland handle once known, else the class from IPC.

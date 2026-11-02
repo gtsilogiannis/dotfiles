@@ -47,12 +47,27 @@ RowLayout {
                 Repeater {
                     model: chip.appIds
 
-                    IconImage {
+                    Item {
+                        id: app
                         required property string modelData
-                        implicitSize: 16
-                        source: Apps.icon(modelData)
-                        mipmap: true
+                        readonly property string iconSource: Apps.icon(modelData)
+                        implicitWidth: 16
+                        implicitHeight: 16
                         opacity: chip.focused ? 1 : 0.7
+
+                        IconImage {
+                            anchors.fill: parent
+                            visible: app.iconSource !== ""
+                            source: app.iconSource
+                            mipmap: true
+                        }
+                        // No theme icon for this app: a generic glyph keeps the window visible.
+                        MaterialIcon {
+                            anchors.centerIn: parent
+                            visible: app.iconSource === ""
+                            icon: "apps"
+                            font.pixelSize: 16
+                        }
                     }
                 }
             }
