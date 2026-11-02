@@ -10,7 +10,7 @@ Singleton {
     id: root
 
     readonly property bool active: sunset.running
-    property int temperature: 4500          // Kelvin; lower is warmer
+    property int temperature: 3400          // Kelvin; lower is warmer
 
     function toggle() {
         sunset.running = !sunset.running;
