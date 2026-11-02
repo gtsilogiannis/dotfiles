@@ -1,5 +1,5 @@
 // Power menu (ALT + F4 and the power button on the bar). Every action runs
-// immediately. Keys: ← → and Enter, or the underlined letter.
+// immediately. Keys: ← → and Enter, or the underlined letter (L S O R H).
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -19,7 +19,7 @@ MenuWindow {
         { key: "s", icon: "bedtime",            label: "Suspend",  accent: Theme.primary },
         { key: "o", icon: "logout",             label: "Logout",   accent: Theme.tertiary },
         { key: "r", icon: "restart_alt",        label: "Reboot",   accent: Theme.tertiary },
-        { key: "p", icon: "power_settings_new", label: "Shutdown", accent: Theme.error },
+        { key: "h", icon: "power_settings_new", label: "Shutdown", accent: Theme.error },
     ]
 
     function run(index) {
@@ -87,12 +87,12 @@ MenuWindow {
                             Layout.alignment: Qt.AlignHCenter
                         }
                         Label {
-                            // Underline the shortcut letter.
+                            // Underline the shortcut letter (plain label if the letter is not in it).
                             textFormat: Text.StyledText
                             text: {
                                 const l = button.modelData.label;
                                 const i = l.toLowerCase().indexOf(button.modelData.key);
-                                return `${l.slice(0, i)}<u>${l[i]}</u>${l.slice(i + 1)}`;
+                                return i < 0 ? l : `${l.slice(0, i)}<u>${l[i]}</u>${l.slice(i + 1)}`;
                             }
                             color: button.current ? Theme.surfaceText : Theme.surfaceTextMuted
                             Layout.alignment: Qt.AlignHCenter
