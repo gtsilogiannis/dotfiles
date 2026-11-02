@@ -34,6 +34,7 @@ hypridle
 hyprland
 hyprlock
 hyprpolkitagent
+hyprsunset
 intel-ucode
 iverilog
 kitty
@@ -70,7 +71,6 @@ spotify-launcher
 starship
 stow
 sudo
-swaync
 tcpdump
 thermald
 thunar
@@ -84,7 +84,6 @@ unzip
 usbutils
 valgrind
 verilator
-waybar
 wireplumber
 wl-clipboard
 xdg-desktop-portal-hyprland
