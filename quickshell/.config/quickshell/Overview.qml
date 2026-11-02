@@ -104,6 +104,7 @@ MenuWindow {
         const id = Hyprland.focusedWorkspace?.id ?? 1;
         root.selected = id >= 1 && id <= 10 ? id - 1 : 0;
         search.forceActiveFocus();
+        report.restart();
     }
 
     // After a move or close Hyprland retiles the workspace; fetch the new geometry.
@@ -111,6 +112,19 @@ MenuWindow {
         id: refresh
         interval: 150
         onTriggered: Hyprland.refreshToplevels()
+    }
+
+    // One line per open in the log: how many windows have geometry to be drawn.
+    Timer {
+        id: report
+        interval: 500
+        onTriggered: {
+            const all = Hyprland.toplevels.values.filter(t => (t.workspace?.id ?? 0) >= 1 && t.workspace.id <= 10);
+            const placed = all.filter(t => t.lastIpcObject?.at?.length === 2);
+            let drawn = 0;
+            for (let i = 0; i < tiles.count; i++) drawn += tiles.itemAt(i)?.windowCount ?? 0;
+            console.info(`Overview: ${all.length} windows on workspaces 1-10, ${placed.length} with geometry, ${drawn} in the tiles`);
+        }
     }
 
     ColumnLayout {
@@ -197,6 +211,7 @@ MenuWindow {
                     // Layout pixels -> tile pixels.
                     readonly property real scaleFactor: mon ? width / (mon.width / mon.scale) : width / root.monitorWidth
                     readonly property bool active: Hyprland.focusedWorkspace?.id === wsId
+                    readonly property int windowCount: windowRepeater.count
                     readonly property bool highlighted: root.dragged ? root.dropIndex === index : root.selected === index
 
                     width: root.tileWidth
@@ -225,6 +240,7 @@ MenuWindow {
                     }
 
                     Repeater {
+                        id: windowRepeater
                         model: wsTile.ws?.toplevels ?? null
 
                         OverviewWindow {

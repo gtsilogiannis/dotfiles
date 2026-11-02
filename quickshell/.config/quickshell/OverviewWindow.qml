@@ -14,7 +14,8 @@ Item {
     required property var overview          // Overview.qml
 
     readonly property var ipc: toplevel?.lastIpcObject ?? ({})
-    readonly property bool placed: tile !== null && Array.isArray(ipc.at) && Array.isArray(ipc.size) && (tile.mon ?? null) !== null
+    // at / size arrive from IPC as Qt sequences, not JS arrays (Array.isArray is false), so check the length.
+    readonly property bool placed: tile !== null && ipc.at?.length === 2 && ipc.size?.length === 2 && (tile.mon ?? null) !== null
     readonly property string appId: Apps.idOf(toplevel)
     readonly property string iconSource: Apps.icon(appId)
     readonly property bool dimmed: root.overview.query !== "" && !root.overview.matches.includes(toplevel)
