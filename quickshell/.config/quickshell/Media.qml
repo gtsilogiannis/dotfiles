@@ -1,4 +1,5 @@
-// Now playing: play/pause button and "title · artist". Browsers are ignored,
+// Now playing: play/pause button and "title · artist", or only a muted icon
+// when no player is open. Browsers are ignored,
 // as in the Waybar module. Left click toggles, right click skips, scroll seeks tracks.
 import QtQuick
 import QtQuick.Layouts
@@ -30,8 +31,8 @@ Pill {
         color: root.player === null ? Theme.surfaceTextMuted : Theme.primary
     }
     Label {
-        text: root.player === null ? "Nothing playing" : (root.track || root.player.identity)
-        color: root.player === null ? Theme.surfaceTextMuted : Theme.surfaceText
+        visible: root.player !== null           // no player (Spotify closed): icon only
+        text: root.track || (root.player?.identity ?? "")
         elide: Text.ElideRight
         Layout.maximumWidth: 320
     }

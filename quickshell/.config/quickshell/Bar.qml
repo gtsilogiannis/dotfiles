@@ -1,5 +1,5 @@
-// Top bar: workspaces and focused app on the left, media and clock in the
-// center, system modules on the right.
+// Top bar: workspaces on the left, media and clock in the center,
+// system modules on the right.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -24,12 +24,8 @@ PanelWindow {
         border.width: 1
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
 
-        RowLayout {
+        Workspaces {
             anchors { left: parent.left; leftMargin: 5; verticalCenter: parent.verticalCenter }
-            spacing: Theme.spacing
-
-            Workspaces {}
-            ActiveWindow {}
         }
 
         RowLayout {

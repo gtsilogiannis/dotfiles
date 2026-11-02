@@ -9,11 +9,14 @@ Pill {
 
     required property var window        // the bar, needed to place the menus
 
+    // nm-applet keeps running, but the Network pill already shows the connection.
+    readonly property var items: SystemTray.items.values.filter(item => item.id !== "nm-applet")
+
     interactive: false
-    visible: SystemTray.items.values.length > 0
+    visible: items.length > 0
 
     Repeater {
-        model: SystemTray.items.values
+        model: root.items
 
         IconImage {
             id: trayIcon

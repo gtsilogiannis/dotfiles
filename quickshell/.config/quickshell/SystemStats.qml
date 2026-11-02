@@ -58,6 +58,12 @@ Singleton {
         }
     }
 
+    // `qs ipc call stats refreshUpdates` (used by the up alias after yay).
+    IpcHandler {
+        target: "stats"
+        function refreshUpdates(): void { root.refreshUpdates(); }
+    }
+
     Process {
         id: updatesProc
         command: ["sh", "-c", "(checkupdates; yay -Qum) 2>/dev/null | wc -l"]

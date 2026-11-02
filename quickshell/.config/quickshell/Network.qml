@@ -1,4 +1,4 @@
-// Wi-Fi name and signal, or wired. Click: nmtui in kitty.
+// Wi-Fi name and signal, or wired. Click: Wi-Fi menu in Rofi.
 import QtQuick
 import Quickshell
 import Quickshell.Networking
@@ -24,5 +24,5 @@ Stat {
          : (network?.name ?? wifi.name).slice(0, 12)
     accent: wifi === null && wired === null ? Theme.error : Theme.primary
 
-    onClicked: Quickshell.execDetached(["kitty", "--title", "Network", "-e", "nmtui"])
+    onClicked: Quickshell.execDetached([Quickshell.shellDir + "/scripts/wifi-menu.sh"])
 }
