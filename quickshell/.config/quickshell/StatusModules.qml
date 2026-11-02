@@ -1,5 +1,5 @@
 // Right side of the bar, left to right: tray, updates, temperature, CPU, RAM,
-// volume, notifications, network, power.
+// volume, notifications, network, battery, power.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -63,6 +63,8 @@ RowLayout {
     Notifications {}
 
     Network {}
+
+    Battery {}
 
     Stat {
         icon: "power_settings_new"
