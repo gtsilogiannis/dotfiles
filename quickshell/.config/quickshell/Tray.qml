@@ -10,8 +10,8 @@ Pill {
     required property var window        // the bar, needed to place the menus
 
     // Network and Bluetooth applets keep running, but the Network pill and the
-    // control center already cover them.
-    readonly property var items: SystemTray.items.values.filter(item => !/nm-applet|blueman|bluetooth/i.test(item.id))
+    // control center already cover them; the media pill and the workspace icons cover Spotify.
+    readonly property var items: SystemTray.items.values.filter(item => !/nm-applet|blueman|bluetooth|spotify/i.test(item.id))
 
     interactive: false
     visible: items.length > 0
