@@ -24,7 +24,7 @@ hl.monitor({
 
 local terminal    = "kitty"
 local fileManager = "thunar"
-local menu        = "rofi -show drun -show-icons"
+local menu        = "qs ipc call menu toggle launcher"
 local browser     = "firefox"
 
 -------------------
@@ -37,7 +37,6 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("sleep 1 && awww img ~/.cache/current_wallpaper.png &")
     hl.exec_cmd("qs &")
     hl.exec_cmd("hypridle &")
-    hl.exec_cmd("nm-applet --indicator &")
     hl.exec_cmd("wl-paste --type text --watch cliphist store &")
     hl.exec_cmd("wl-paste --type image --watch cliphist store &")
 end)
@@ -130,9 +129,9 @@ hl.config({
     },
 })
 
--- Blur behind the bar, the launcher and the notifications.
+-- Blur behind the bar, the menus and the notifications.
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
-for _, namespace in ipairs({ "quickshell-bar", "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "rofi" }) do
+for _, namespace in ipairs({ "quickshell-bar", "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu" }) do
     hl.layer_rule({
         name         = "blur-" .. namespace,
         match        = { namespace = "^" .. namespace .. "$" },
@@ -204,14 +203,15 @@ hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 
--- Screenshots (grim + slurp + swappy) + Lock Screen + Alt F4
+-- Screenshots (grim + slurp) + Lock Screen + Power menu (Alt F4) + Clipboard history (Alt ,)
 
 -- Win + S: Full Screen
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("grim - | wl-copy --type image/png"))
 -- Win + Shift + S: User Defined
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy --type image/png"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind("ALT + F4", hl.dsp.exec_cmd("~/.config/rofi/powermenu.sh"))
+hl.bind("ALT + F4", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
+hl.bind("ALT + comma", hl.dsp.exec_cmd("qs ipc call menu toggle clipboard"))
 
 -- Focus with Arrow Keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -220,7 +220,7 @@ hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
 -- Wallpaper Changing
-hl.bind("SUPER + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/WallpaperSelect.sh"))
+hl.bind("SUPER + W", hl.dsp.exec_cmd("qs ipc call menu toggle wallpaper"))
 
 -- Workspaces Navigation & Window Moving
 for i = 1, 10 do

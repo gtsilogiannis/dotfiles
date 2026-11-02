@@ -28,7 +28,6 @@ git
 gnome-keyring
 grim
 grub
-gtkwave
 gvfs
 hypridle
 hyprland
@@ -46,7 +45,6 @@ loupe
 matugen
 micro
 neovim
-network-manager-applet
 networkmanager
 nmap
 noto-fonts-emoji
@@ -63,8 +61,6 @@ python-pip
 python-scapy
 qt6-wayland
 quickshell
-rofi
-scrcpy
 sddm
 slurp
 spotify-launcher
