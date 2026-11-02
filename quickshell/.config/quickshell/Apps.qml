@@ -6,8 +6,12 @@ import QtQuick
 import Quickshell
 
 Singleton {
+    // DesktopEntries scans the .desktop files in the background on first use, so the
+    // first lookups return null. Reading the model here makes every binding that calls
+    // entry() (directly or through name() / icon()) run again once the scan has finished.
     function entry(appId) {
-        return appId ? DesktopEntries.heuristicLookup(appId) : null;
+        const loaded = DesktopEntries.applications.values.length;
+        return appId && loaded > 0 ? DesktopEntries.heuristicLookup(appId) : null;
     }
 
     function name(appId) {
