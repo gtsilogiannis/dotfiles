@@ -14,11 +14,11 @@ Item {
     required property var overview          // Overview.qml
 
     readonly property var ipc: toplevel?.lastIpcObject ?? ({})
-    readonly property bool placed: Array.isArray(ipc.at) && Array.isArray(ipc.size) && tile.mon !== null
+    readonly property bool placed: tile !== null && Array.isArray(ipc.at) && Array.isArray(ipc.size) && (tile.mon ?? null) !== null
     readonly property string appId: Apps.idOf(toplevel)
     readonly property string iconSource: Apps.icon(appId)
-    readonly property bool dimmed: overview.query !== "" && !overview.matches.includes(toplevel)
-    readonly property bool firstMatch: overview.query !== "" && overview.matches[0] === toplevel
+    readonly property bool dimmed: root.overview.query !== "" && !root.overview.matches.includes(toplevel)
+    readonly property bool firstMatch: root.overview.query !== "" && root.overview.matches[0] === toplevel
     readonly property string geometryKey: placed ? `${ipc.at}|${ipc.size}` : ""
 
     visible: placed
@@ -27,10 +27,10 @@ Item {
     width: placed ? Math.max(8, ipc.size[0] * tile.scaleFactor) : 0
     height: placed ? Math.max(8, ipc.size[1] * tile.scaleFactor) : 0
     z: ipc.floating ? 2 : 1                 // floating windows above tiled ones, as on screen
-    opacity: overview.dragged === toplevel ? 0.35 : dimmed ? 0.25 : 1
+    opacity: root.overview.dragged === toplevel ? 0.35 : dimmed ? 0.25 : 1
 
     // Retiling after a move or close: take a new picture at the new size.
-    onGeometryKeyChanged: if (overview.visible && preview.hasContent) preview.captureFrame()
+    onGeometryKeyChanged: if (root.overview.visible && preview.hasContent) preview.captureFrame()
 
     Rectangle {
         anchors.fill: parent
@@ -94,7 +94,7 @@ Item {
 
     // Title on hover.
     Rectangle {
-        visible: mouse.containsMouse && overview.dragged === null
+        visible: mouse.containsMouse && root.overview.dragged === null
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 4 }
         height: 22
         radius: 6
@@ -113,12 +113,12 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        cursorShape: overview.dragged === root.toplevel ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+        cursorShape: root.overview.dragged === root.toplevel ? Qt.ClosedHandCursor : Qt.PointingHandCursor
 
         property point pressedAt
         property bool dragging: false
 
-        onEntered: if (overview.dragged === null) overview.selected = root.tile.index
+        onEntered: if (root.overview.dragged === null) root.overview.selected = root.tile.index
         onPressed: mouse => {
             pressedAt = Qt.point(mouse.x, mouse.y);
             dragging = false;
@@ -127,16 +127,16 @@ Item {
         onPositionChanged: mouse => {
             if (!(mouse.buttons & Qt.LeftButton)) return;
             if (!dragging && Math.hypot(mouse.x - pressedAt.x, mouse.y - pressedAt.y) > 6) dragging = true;
-            if (dragging) overview.dragMove(root.toplevel, mapToItem(overview.dragLayer, mouse.x, mouse.y));
+            if (dragging) root.overview.dragMove(root.toplevel, mapToItem(root.overview.dragLayer, mouse.x, mouse.y));
         }
         onReleased: mouse => {
             if (dragging) {
                 dragging = false;
-                overview.dragEnd();
+                root.overview.dragEnd();
             } else if (mouse.button === Qt.MiddleButton) {
-                overview.closeWindow(root.toplevel);
+                root.overview.closeWindow(root.toplevel);
             } else if (mouse.button === Qt.LeftButton) {
-                overview.focusWindow(root.toplevel);
+                root.overview.focusWindow(root.toplevel);
             }
         }
     }

@@ -188,7 +188,7 @@ MenuWindow {
                 model: root.columns * root.rows
 
                 Rectangle {
-                    id: tile
+                    id: wsTile
 
                     required property int index
                     readonly property int wsId: index + 1
@@ -220,17 +220,17 @@ MenuWindow {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onEntered: if (!root.dragged) root.selected = tile.index
-                        onClicked: root.goTo(tile.wsId)
+                        onEntered: if (!root.dragged) root.selected = wsTile.index
+                        onClicked: root.goTo(wsTile.wsId)
                     }
 
                     Repeater {
-                        model: tile.ws?.toplevels ?? null
+                        model: wsTile.ws?.toplevels ?? null
 
                         OverviewWindow {
                             required property var modelData
                             toplevel: modelData
-                            tile: tile
+                            tile: wsTile
                             overview: root
                         }
                     }
@@ -241,14 +241,14 @@ MenuWindow {
                         width: Math.max(24, number.implicitWidth + 12)
                         height: 24
                         radius: 12
-                        color: tile.active ? Theme.primary : Qt.alpha(Theme.surface, 0.8)
+                        color: wsTile.active ? Theme.primary : Qt.alpha(Theme.surface, 0.8)
                         z: 5
 
                         Label {
                             id: number
                             anchors.centerIn: parent
-                            text: tile.wsId
-                            color: tile.active ? Theme.primaryText : Theme.surfaceText
+                            text: wsTile.wsId
+                            color: wsTile.active ? Theme.primaryText : Theme.surfaceText
                             font.weight: Font.DemiBold
                         }
                     }
@@ -258,7 +258,7 @@ MenuWindow {
                         anchors.fill: parent
                         radius: parent.radius
                         color: "transparent"
-                        border.width: tile.highlighted ? 3 : tile.active ? 1 : 0
+                        border.width: wsTile.highlighted ? 3 : wsTile.active ? 1 : 0
                         border.color: Theme.primary
                         z: 6
                     }
