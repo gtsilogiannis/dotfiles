@@ -1,6 +1,5 @@
-// Wi-Fi name and signal, or wired. Click: Wi-Fi menu in Rofi.
+// Wi-Fi name and signal, or wired. Click: Wi-Fi list in the control center.
 import QtQuick
-import Quickshell
 import Quickshell.Networking
 
 Stat {
@@ -24,5 +23,5 @@ Stat {
          : (network?.name ?? wifi.name).slice(0, 12)
     accent: wifi === null && wired === null ? Theme.error : Theme.primary
 
-    onClicked: Quickshell.execDetached([Quickshell.shellDir + "/scripts/wifi-menu.sh"])
+    onClicked: ControlCenterState.openPage("wifi")
 }

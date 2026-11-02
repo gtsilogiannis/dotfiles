@@ -11,6 +11,7 @@ Singleton {
 
     property bool open: false
     property real closedAt: 0
+    property string page: "main"            // main | wifi | bluetooth
 
     function close() {
         if (!root.open) return;
@@ -25,10 +26,17 @@ Singleton {
         else if (Date.now() - root.closedAt > 300) root.open = true;
     }
 
+    // Opens straight on one view, e.g. the Wi-Fi list from the bar.
+    function openPage(name) {
+        root.page = name;
+        root.open = true;
+    }
+
     // qs ipc call controlcenter toggle   (bound to SUPER + N in hyprland.lua)
     IpcHandler {
         target: "controlcenter"
         function toggle(): void { root.toggle(); }
         function close(): void { root.close(); }
+        function openPage(name: string): void { root.openPage(name); }
     }
 }

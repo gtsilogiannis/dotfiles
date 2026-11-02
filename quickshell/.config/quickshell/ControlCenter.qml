@@ -1,5 +1,5 @@
 // Control center on the right edge, below the bar: toggles, volume and
-// brightness, media, notification history, and a Bluetooth device view.
+// brightness, media, notification history, and Wi-Fi / Bluetooth views.
 // Opens from the bar bell or SUPER + N; closes on Esc or a click outside.
 import QtQuick
 import QtQuick.Layouts
@@ -26,15 +26,13 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell-controlcenter"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand     // for Esc
 
-    property string page: "main"            // main | bluetooth
-
     readonly property var sink: Pipewire.defaultAudioSink
     readonly property var adapter: Bluetooth.defaultAdapter
 
     PwObjectTracker { objects: [root.sink] }
 
     onVisibleChanged: {
-        if (!visible) { page = "main"; return; }
+        if (!visible) { ControlCenterState.page = "main"; return; }
         Brightness.refresh();           // the brightness keys may have changed it
         panel.forceActiveFocus();       // Esc works without clicking first
     }
@@ -55,9 +53,9 @@ PanelWindow {
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
 
         focus: true
-        // Esc steps back from the Bluetooth view first, then closes.
+        // Esc steps back from the Wi-Fi / Bluetooth view first, then closes.
         Keys.onEscapePressed: {
-            if (root.page !== "main") root.page = "main";
+            if (ControlCenterState.page !== "main") ControlCenterState.page = "main";
             else ControlCenterState.close();
         }
 
@@ -71,11 +69,15 @@ PanelWindow {
                 columnSpacing: 8
                 Layout.fillWidth: true
 
+                // Same as Bluetooth: off -> a tap turns it on; on -> a tap opens the network list.
                 QuickToggle {
                     icon: "wifi"
                     label: "Wi-Fi"
                     active: Networking.wifiEnabled
-                    onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
+                    onClicked: {
+                        if (!Networking.wifiEnabled) Networking.wifiEnabled = true;
+                        else ControlCenterState.page = "wifi";
+                    }
                 }
                 // Off: a tap turns it on. On: a tap opens the device view,
                 // which has the button to turn it off (like iOS / Windows).
@@ -86,7 +88,7 @@ PanelWindow {
                     active: root.adapter?.enabled ?? false
                     onClicked: {
                         if (!root.adapter.enabled) root.adapter.enabled = true;
-                        else root.page = "bluetooth";
+                        else ControlCenterState.page = "bluetooth";
                     }
                 }
                 QuickToggle {
@@ -103,16 +105,23 @@ PanelWindow {
                 }
             }
 
+            WifiPage {
+                visible: ControlCenterState.page === "wifi"
+                onBack: ControlCenterState.page = "main"
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+
             BluetoothPage {
-                visible: root.page === "bluetooth"
+                visible: ControlCenterState.page === "bluetooth"
                 adapter: root.adapter
-                onBack: root.page = "main"
+                onBack: ControlCenterState.page = "main"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
 
             Card {
-                visible: root.page === "main"
+                visible: ControlCenterState.page === "main"
                 Layout.fillWidth: true
 
                 SliderRow {
@@ -132,12 +141,12 @@ PanelWindow {
             }
 
             MediaCard {
-                visible: root.page === "main" && player !== null
+                visible: ControlCenterState.page === "main" && player !== null
                 Layout.fillWidth: true
             }
 
             RowLayout {
-                visible: root.page === "main"
+                visible: ControlCenterState.page === "main"
                 Layout.fillWidth: true
                 Layout.topMargin: 4
 
@@ -163,7 +172,7 @@ PanelWindow {
             }
 
             ListView {
-                visible: root.page === "main"
+                visible: ControlCenterState.page === "main"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
