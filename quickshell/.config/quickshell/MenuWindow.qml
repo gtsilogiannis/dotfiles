@@ -14,6 +14,8 @@ PanelWindow {
     property int panelWidth: 560
     property int panelHeight: 480
     property alias panelColor: panel.color
+    property real dimOpacity: 0.15          // above ignore_alpha (0.2) Hyprland also blurs the screen behind
+    property bool animated: false           // fade + zoom the panel in on open
 
     signal opened                           // reset the menu and give the focus here
 
@@ -26,16 +28,27 @@ PanelWindow {
     visible: MenuState.open === menuName
 
     WlrLayershell.layer: WlrLayer.Overlay
-    // Blur namespace in hyprland.lua; the dim (alpha 0.15) is below its ignore_alpha,
-    // so only the panel is blurred.
+    // Blur namespace in hyprland.lua; the default dim (alpha 0.15) is below its
+    // ignore_alpha, so only the panel is blurred.
     WlrLayershell.namespace: "quickshell-menu"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
-    onVisibleChanged: if (visible) opened()
+    onVisibleChanged: if (visible) {
+        opened();
+        if (animated) openAnimation.restart();
+    }
+
+    ParallelAnimation {
+        id: openAnimation
+        NumberAnimation { target: dim; property: "opacity"; from: 0; to: 1; duration: 180; easing.type: Easing.OutCubic }
+        NumberAnimation { target: panel; property: "opacity"; from: 0; to: 1; duration: 180; easing.type: Easing.OutCubic }
+        NumberAnimation { target: panel; property: "scale"; from: 0.95; to: 1; duration: 180; easing.type: Easing.OutCubic }
+    }
 
     Rectangle {
+        id: dim
         anchors.fill: parent
-        color: Qt.alpha("#000000", 0.15)
+        color: Qt.alpha("#000000", root.dimOpacity)
         MouseArea { anchors.fill: parent; onClicked: MenuState.close() }
     }
 

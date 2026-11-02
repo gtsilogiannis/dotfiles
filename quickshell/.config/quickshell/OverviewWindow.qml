@@ -1,6 +1,6 @@
 // One window inside an overview tile: placed and sized from its Hyprland geometry,
 // with a frozen preview (captured when the overview opens and again when the window
-// moves or resizes) and the app icon on top, so tiny previews stay recognisable.
+// moves or resizes). Hover shows the app icon and the title.
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -59,14 +59,15 @@ Item {
             }
         }
 
-        // App icon, centred; grows with the window but stays readable on tiny tiles.
+        // App icon in the centre, only on hover (and while the preview is not ready yet).
         Rectangle {
             anchors.centerIn: parent
-            readonly property real size: Math.max(22, Math.min(44, Math.min(root.width, root.height) * 0.4))
+            visible: mouse.containsMouse || !preview.hasContent
+            readonly property real size: Math.max(18, Math.min(28, Math.min(root.width, root.height) * 0.25))
             width: size
             height: size
             radius: size / 4
-            color: Qt.alpha(Theme.surface, preview.hasContent ? 0.55 : 0.9)
+            color: Qt.alpha(Theme.surface, 0.75)
 
             IconImage {
                 anchors.centerIn: parent

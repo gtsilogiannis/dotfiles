@@ -1,11 +1,12 @@
-// Workspace overview (SUPER + Tab): workspaces 1-10 in a 2 x 5 grid, each tile
-// showing the wallpaper and a frozen preview of every window at its real place.
+// Workspace overview (SUPER + Tab): the workspaces that have windows (and the focused
+// one) in rows of up to 5, plus one empty workspace to drag windows to. Each tile shows
+// the wallpaper and a frozen preview of every window at its real place.
 //   click window      focus it (switches workspace) and close the overview
 //   middle-click      close the window
 //   drag window       move it to the tile it is dropped on, without following it
 //   click empty tile  go to that workspace
 //   typing            dims the windows that do not match title / app; Enter focuses the first match
-//   arrows, 1-0       select a workspace; Enter goes there; Esc clears the search, then closes
+//   arrows, 1-0       select a shown workspace; Enter goes there; Esc clears the search, then closes
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -17,22 +18,39 @@ MenuWindow {
     id: root
 
     menuName: "overview"
+    dimOpacity: 0.45                        // darker than the other menus: the tiles are the focus
+    animated: true
 
-    readonly property int columns: 5
-    readonly property int rows: 2
+    // Workspaces 1-10 with windows, plus the focused one even when empty.
+    readonly property var usedIds: {
+        const ids = Hyprland.workspaces.values
+            .filter(w => w.id >= 1 && w.id <= 10 && w.toplevels.values.length > 0)
+            .map(w => w.id);
+        const focused = Hyprland.focusedWorkspace?.id ?? 0;
+        if (focused >= 1 && focused <= 10 && !ids.includes(focused)) ids.push(focused);
+        return ids.sort((a, b) => a - b);
+    }
+    // First free workspace, shown last as a drop target for moving windows (0 when all 10 are used).
+    readonly property int freeId: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].find(id => !usedIds.includes(id)) ?? 0
+    readonly property var shownIds: freeId > 0 ? [...usedIds, freeId] : usedIds
+
+    readonly property int maxColumns: 5
+    readonly property int columns: Math.max(1, Math.min(maxColumns, shownIds.length))
+    readonly property int rows: Math.max(1, Math.ceil(shownIds.length / maxColumns))
     readonly property int tileSpacing: 12
 
     // Tile size follows the aspect ratio of the monitor the overview opens on.
     readonly property var monitor: Hyprland.focusedMonitor
     readonly property real monitorWidth: monitor ? monitor.width / monitor.scale : 1920
     readonly property real monitorHeight: monitor ? monitor.height / monitor.scale : 1080
-    readonly property real tileWidth: Math.min(330, (root.screen.width * 0.92 - 28 - (columns - 1) * tileSpacing) / columns)
+    // Sized for 5 per row, so a few workspaces do not turn into huge tiles.
+    readonly property real tileWidth: Math.min(330, (root.screen.width * 0.92 - 28 - (maxColumns - 1) * tileSpacing) / maxColumns)
     readonly property real tileHeight: tileWidth * monitorHeight / monitorWidth
 
     panelWidth: columns * tileWidth + (columns - 1) * tileSpacing + 28
     panelHeight: rows * tileHeight + (rows - 1) * tileSpacing + 28 + 48 + 10 + 20 + 10
 
-    property int selected: 0                // workspace index 0..9 chosen with the keyboard
+    property int selected: 0                // index in shownIds chosen with the keyboard
     property var dragged: null              // HyprlandToplevel being dragged
     property int dropIndex: -1              // tile under the cursor while dragging
     property string wallpaper: ""           // reloaded on every open (set-wallpaper.sh rewrites the file)
@@ -86,10 +104,15 @@ MenuWindow {
         MenuState.close();
     }
 
+    // Left / right walk the tiles in order; up / down jump a row when there is one.
     function moveSelection(dx, dy) {
-        const col = (root.selected % columns + dx + columns) % columns;
-        const row = (Math.floor(root.selected / columns) + dy + rows) % rows;
-        root.selected = row * columns + col;
+        const n = root.shownIds.length;
+        if (n === 0) return;
+        if (dx !== 0) root.selected = (root.selected + dx + n) % n;
+        else {
+            const next = root.selected + dy * root.columns;
+            if (next >= 0 && next < n) root.selected = next;
+        }
     }
 
     // Window positions come from the IPC objects, which update only when fetched.
@@ -101,8 +124,7 @@ MenuWindow {
         search.text = "";
         root.dragged = null;
         root.dropIndex = -1;
-        const id = Hyprland.focusedWorkspace?.id ?? 1;
-        root.selected = id >= 1 && id <= 10 ? id - 1 : 0;
+        root.selected = Math.max(0, root.shownIds.indexOf(Hyprland.focusedWorkspace?.id ?? 0));
         search.forceActiveFocus();
         report.restart();
     }
@@ -163,13 +185,15 @@ MenuWindow {
                             else MenuState.close();
                         } else if (k === Qt.Key_Return || k === Qt.Key_Enter) {
                             if (root.query !== "") root.focusWindow(root.matches[0] ?? null);
-                            else root.goTo(root.selected + 1);
+                            else if (root.selected < root.shownIds.length) root.goTo(root.shownIds[root.selected]);
                         } else if (k === Qt.Key_Left) root.moveSelection(-1, 0);
                         else if (k === Qt.Key_Right) root.moveSelection(1, 0);
                         else if (k === Qt.Key_Up) root.moveSelection(0, -1);
                         else if (k === Qt.Key_Down) root.moveSelection(0, 1);
-                        else if (search.text === "" && k >= Qt.Key_0 && k <= Qt.Key_9)
-                            root.selected = k === Qt.Key_0 ? 9 : k - Qt.Key_1;    // 1..9 -> 0..8, 0 -> 9
+                        else if (search.text === "" && k >= Qt.Key_0 && k <= Qt.Key_9) {
+                            const i = root.shownIds.indexOf(k === Qt.Key_0 ? 10 : k - Qt.Key_0);
+                            if (i >= 0) root.selected = i;              // digits of hidden workspaces do nothing
+                        }
                         else return;
                         event.accepted = true;
                     }
@@ -199,13 +223,15 @@ MenuWindow {
 
             Repeater {
                 id: tiles
-                model: root.columns * root.rows
+                model: root.shownIds
 
                 Rectangle {
                     id: wsTile
 
                     required property int index
-                    readonly property int wsId: index + 1
+                    required property int modelData
+                    readonly property int wsId: modelData
+                    readonly property bool isFree: wsId === root.freeId
                     readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId) ?? null
                     readonly property var mon: ws?.monitor ?? root.monitor
                     // Layout pixels -> tile pixels.
@@ -227,7 +253,7 @@ MenuWindow {
                         fillMode: Image.PreserveAspectCrop
                         asynchronous: true
                         cache: false
-                        opacity: 0.85
+                        opacity: wsTile.isFree ? 0.3 : 0.85      // the free drop target stays in the background
                     }
 
                     // Click on the empty part of the tile: go to the workspace.
@@ -249,6 +275,14 @@ MenuWindow {
                             tile: wsTile
                             overview: root
                         }
+                    }
+
+                    MaterialIcon {
+                        anchors.centerIn: parent
+                        visible: wsTile.isFree
+                        icon: "add"
+                        color: Theme.surfaceTextMuted
+                        font.pixelSize: 32
                     }
 
                     // Workspace number
@@ -287,7 +321,7 @@ MenuWindow {
             horizontalAlignment: Text.AlignHCenter
             color: Theme.surfaceTextMuted
             font.pixelSize: Theme.fontSize - 2
-            text: "Click: focus   ·   Middle-click: close   ·   Drag: move   ·   ← ↑ → ↓ / 1–0: workspace   ·   Enter: go   ·   Esc: close"
+            text: "Click: focus   ·   Middle-click: close   ·   Drag: move (+ = empty workspace)   ·   ← ↑ → ↓ / 1–0: workspace   ·   Enter: go   ·   Esc: close"
         }
     }
 
@@ -333,7 +367,7 @@ MenuWindow {
     }
 
     function dragEnd() {
-        if (root.dragged && root.dropIndex >= 0) root.moveWindow(root.dragged, root.dropIndex + 1);
+        if (root.dragged && root.dropIndex >= 0) root.moveWindow(root.dragged, root.shownIds[root.dropIndex]);
         root.dragged = null;
         root.dropIndex = -1;
     }
