@@ -211,6 +211,8 @@ hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("grim - | wl-copy --type image/png"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy --type image/png"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind("ALT + F4", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
+-- Without Fn the laptop F4 key sends XF86AudioMicMute, so ALT + F4 arrives as ALT + XF86AudioMicMute
+hl.bind("ALT + XF86AudioMicMute", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
 hl.bind("ALT + comma", hl.dsp.exec_cmd("qs ipc call menu toggle clipboard"))
 
 -- Focus with Arrow Keys
