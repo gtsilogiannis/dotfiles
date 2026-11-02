@@ -11,4 +11,8 @@ ShellRoot {
             screen: modelData
         }
     }
+
+    // Single instances, on the monitor that has focus.
+    NotificationPopups {}
+    ControlCenter {}
 }

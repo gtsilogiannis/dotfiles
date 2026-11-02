@@ -1,37 +1,16 @@
-// SwayNC state. Left click: notification panel, right click: Do Not Disturb.
-// swaync-client -swb prints one JSON line per change, e.g. {"alt": "dnd-notification", ...}.
+// Bell in the bar. Left click: control center, right click: Do Not Disturb.
 import QtQuick
-import Quickshell
-import Quickshell.Io
 
 Stat {
-    id: root
+    readonly property int count: NotificationService.history.length
 
-    property string swayncState: "none"       // none | notification | dnd-none | dnd-notification | inhibited-*
-    property int count: 0
-
-    readonly property bool dnd: swayncState.startsWith("dnd")
-    readonly property bool unread: swayncState.endsWith("notification")
-
-    icon: dnd ? "notifications_off" : unread ? "notifications_unread" : "notifications"
-    filled: unread
+    icon: NotificationService.dnd ? "notifications_off" : count > 0 ? "notifications_unread" : "notifications"
+    filled: count > 0 && !NotificationService.dnd
     value: count > 0 ? String(count) : ""
-    accent: dnd ? Theme.surfaceTextMuted : Theme.primary
+    accent: NotificationService.dnd ? Theme.surfaceTextMuted : Theme.primary
 
-    onClicked: mouse => Quickshell.execDetached(
-        mouse.button === Qt.RightButton ? ["swaync-client", "-d", "-sw"] : ["swaync-client", "-t", "-sw"])
-
-    Process {
-        running: true
-        command: ["swaync-client", "-swb"]
-        stdout: SplitParser {
-            onRead: line => {
-                try {
-                    const data = JSON.parse(line);
-                    root.swayncState = data.alt ?? "none";
-                    root.count = parseInt(data.text) || 0;
-                } catch (e) {}
-            }
-        }
+    onClicked: mouse => {
+        if (mouse.button === Qt.RightButton) NotificationService.dnd = !NotificationService.dnd;
+        else ControlCenterState.toggle();
     }
 }

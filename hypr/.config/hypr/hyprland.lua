@@ -132,7 +132,7 @@ hl.config({
 
 -- Blur behind the bar, the launcher and the notifications.
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
-for _, namespace in ipairs({ "waybar", "quickshell-bar", "rofi", "swaync-control-center", "swaync-notification-window" }) do
+for _, namespace in ipairs({ "quickshell-bar", "quickshell-notifications", "quickshell-controlcenter", "rofi" }) do
     hl.layer_rule({
         name         = "blur-" .. namespace,
         match        = { namespace = "^" .. namespace .. "$" },
@@ -197,6 +197,7 @@ local mainMod = "SUPER"
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + N",      hl.dsp.exec_cmd("qs ipc call controlcenter toggle"))
 hl.bind(mainMod .. " + SPACE",  hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
