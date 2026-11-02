@@ -39,8 +39,14 @@ Singleton {
     readonly property int radius: 12
     readonly property int barHeight: 34
 
+    readonly property int pillHeight: barHeight - 10   // 24 px: 5 px of bar visible above and below
+    readonly property int spacing: 6                    // between pills and inside them
+
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
-    readonly property int fontSize: 11
+    readonly property int fontSize: 12
+    // Variable icon font from ttf-material-symbols-variable; icons are typed by name (ligatures).
+    readonly property string iconFamily: "Material Symbols Rounded"
+    readonly property int iconSize: 17
 
     FileView {
         id: colorsFile

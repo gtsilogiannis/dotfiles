@@ -1,47 +1,86 @@
-// Workspace indicator: one dot per workspace, the focused one stretches into a pill.
+// Workspaces 1..5 (more if a higher one exists). Each chip shows the icons of
+// its windows; an empty workspace shows its number. The focused chip is tinted.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
+import Quickshell.Widgets
 
 RowLayout {
     id: root
 
-    // Always show 1..5, more if a higher workspace exists.
     readonly property int count: Math.max(5, ...Hyprland.workspaces.values.map(w => w.id))
 
-    spacing: 6
+    spacing: 4
 
     Repeater {
         model: root.count
 
         Rectangle {
-            id: dot
+            id: chip
 
             required property int index
             readonly property int wsId: index + 1
             readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId) ?? null
             readonly property bool focused: Hyprland.focusedWorkspace?.id === wsId
-            readonly property bool occupied: ws !== null && ws.toplevels.values.length > 0
+            // One icon per app: two kitty windows show one kitty icon.
+            readonly property var appIds: {
+                const ids = (ws?.toplevels.values ?? []).map(t => Apps.idOf(t)).filter(id => id !== "");
+                return [...new Set(ids)].slice(0, 4);
+            }
 
-            implicitWidth: focused ? 26 : 10
-            implicitHeight: 10
+            Layout.preferredWidth: Math.max(Theme.pillHeight, icons.implicitWidth + 14)
+            Layout.preferredHeight: Theme.pillHeight
             radius: height / 2
-            color: focused ? Theme.primary
-                 : ws?.urgent ? Theme.error
-                 : occupied ? Theme.surfaceTextMuted
-                 : Theme.outlineVariant
+            color: focused ? Qt.alpha(Theme.primary, 0.25)
+                 : mouse.containsMouse ? Qt.alpha(Theme.surfaceContainerHigh, 0.9)
+                 : Qt.alpha(Theme.surfaceContainerHigh, 0.55)
+            border.width: focused ? 1 : 0
+            border.color: Theme.primary
+            Behavior on color { ColorAnimation { duration: 150 } }
+            Behavior on Layout.preferredWidth { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
-            Behavior on implicitWidth { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation { duration: 180 } }
+            Row {
+                id: icons
+                anchors.centerIn: parent
+                spacing: 4
+
+                Repeater {
+                    model: chip.appIds
+
+                    IconImage {
+                        required property string modelData
+                        implicitSize: 16
+                        source: Apps.icon(modelData)
+                        mipmap: true
+                        opacity: chip.focused ? 1 : 0.7
+                    }
+                }
+            }
+
+            Label {
+                anchors.centerIn: parent
+                visible: chip.appIds.length === 0
+                text: chip.wsId
+                color: chip.focused ? Theme.primary : Theme.surfaceTextMuted
+                font.weight: chip.focused ? Font.Bold : Font.Normal
+            }
+
+            Rectangle {     // urgent window on this workspace
+                visible: chip.ws?.urgent ?? false
+                width: 6; height: 6; radius: 3
+                anchors { top: parent.top; right: parent.right; topMargin: 2; rightMargin: 4 }
+                color: Theme.error
+            }
 
             MouseArea {
+                id: mouse
                 anchors.fill: parent
-                anchors.margins: -4                 // larger click target than the dot
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 // The Lua config uses the hl.dsp syntax; legacy configs use "workspace N".
                 onClicked: Hyprland.dispatch(Hyprland.usingLua
-                    ? `hl.dsp.focus({ workspace = "${dot.wsId}" })`
-                    : `workspace ${dot.wsId}`)
+                    ? `hl.dsp.focus({ workspace = "${chip.wsId}" })`
+                    : `workspace ${chip.wsId}`)
             }
         }
     }
