@@ -130,6 +130,16 @@ hl.config({
     },
 })
 
+-- Terminals opened from the bar (btop, system update) float centered instead of
+-- tiling into a space too small for btop (it needs at least 80x24 cells).
+hl.window_rule({
+    name   = "bar-terminals",
+    match  = { class = "^qs-float$" },
+    float  = true,
+    center = true,
+    size   = "1100 700",
+})
+
 -- Blur behind the bar, the launcher and the notifications.
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
 for _, namespace in ipairs({ "waybar", "quickshell-bar", "rofi", "swaync-control-center", "swaync-notification-window" }) do

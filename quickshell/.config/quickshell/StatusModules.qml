@@ -10,9 +10,9 @@ RowLayout {
 
     required property var window
 
-    // Temperature, CPU and RAM open btop.
+    // Temperature, CPU and RAM open btop. Class qs-float: floating and centered (hyprland.lua).
     function openMonitor() {
-        Quickshell.execDetached(["kitty", "--title", "btop", "-e", "btop"]);
+        Quickshell.execDetached(["kitty", "--class", "qs-float", "--title", "btop", "-e", "btop"]);
     }
 
     spacing: Theme.spacing
@@ -32,7 +32,7 @@ RowLayout {
         // bash -c is not an interactive zsh, so .zshrc (and fastfetch) is not loaded.
         Process {
             id: upgrade
-            command: ["kitty", "--title", "System update", "-e", "bash", "-c",
+            command: ["kitty", "--class", "qs-float", "--title", "System update", "-e", "bash", "-c",
                 "yay; read -n 1 -s -r -p 'Done. Press any key to close.'"]
             onExited: SystemStats.refreshUpdates()
         }
