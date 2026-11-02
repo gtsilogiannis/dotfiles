@@ -12,7 +12,7 @@ alias v="micro"
 alias sv="sudo micro"
 
 # Auto-refresh Waybar package counter after update.
-alias up='yay && pkill -SIGRTMIN+8 waybar'
+alias up='yay && qs ipc call stats refreshUpdates'
 
 
 # Full system cleanup.
