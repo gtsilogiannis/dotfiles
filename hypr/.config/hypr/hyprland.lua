@@ -224,6 +224,9 @@ hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 -- Wallpaper Changing
 hl.bind("SUPER + W", hl.dsp.exec_cmd("qs ipc call menu toggle wallpaper"))
 
+-- Workspace overview
+hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("qs ipc call menu toggle overview"))
+
 -- Workspaces Navigation & Window Moving
 for i = 1, 10 do
     local key = i % 10
