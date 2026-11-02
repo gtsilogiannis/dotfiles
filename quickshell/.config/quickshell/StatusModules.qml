@@ -10,9 +10,10 @@ RowLayout {
 
     required property var window
 
-    // Temperature, CPU and RAM open btop. Class qs-float: floating and centered (hyprland.lua).
+    // Temperature, CPU and RAM open btop in a normal tiled kitty. The smaller font gives
+    // btop its minimum of 80x24 cells even in a half-height tile.
     function openMonitor() {
-        Quickshell.execDetached(["kitty", "--class", "qs-float", "--title", "btop", "-e", "btop"]);
+        Quickshell.execDetached(["kitty", "-o", "font_size=9.5", "--title", "btop", "-e", "btop"]);
     }
 
     spacing: Theme.spacing
@@ -32,7 +33,7 @@ RowLayout {
         // bash -c is not an interactive zsh, so .zshrc (and fastfetch) is not loaded.
         Process {
             id: upgrade
-            command: ["kitty", "--class", "qs-float", "--title", "System update", "-e", "bash", "-c",
+            command: ["kitty", "--title", "System update", "-e", "bash", "-c",
                 "yay; read -n 1 -s -r -p 'Done. Press any key to close.'"]
             onExited: SystemStats.refreshUpdates()
         }
