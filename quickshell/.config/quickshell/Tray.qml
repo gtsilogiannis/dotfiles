@@ -9,8 +9,9 @@ Pill {
 
     required property var window        // the bar, needed to place the menus
 
-    // nm-applet keeps running, but the Network pill already shows the connection.
-    readonly property var items: SystemTray.items.values.filter(item => item.id !== "nm-applet")
+    // Network and Bluetooth applets keep running, but the Network pill and the
+    // control center already cover them.
+    readonly property var items: SystemTray.items.values.filter(item => !/nm-applet|blueman|bluetooth/i.test(item.id))
 
     interactive: false
     visible: items.length > 0

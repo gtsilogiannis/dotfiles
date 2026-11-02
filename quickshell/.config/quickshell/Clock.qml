@@ -1,11 +1,11 @@
-// Time and date; updates once per minute.
+// Time and date; updates once per minute. Click: calendar popup.
 import QtQuick
 import Quickshell
 
 Pill {
     id: root
 
-    interactive: false
+    onClicked: CalendarState.toggle()
 
     SystemClock {
         id: clock

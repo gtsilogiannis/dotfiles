@@ -25,7 +25,7 @@ Stat {
             if (sink?.audio) sink.audio.muted = !sink.audio.muted;
         } else {
             // Same pavucontrol popup the Waybar module opened.
-            Quickshell.execDetached([Quickshell.env("HOME") + "/.config/waybar/scripts/volume-menu.sh"]);
+            Quickshell.execDetached([Quickshell.shellDir + "/scripts/volume-menu.sh"]);
         }
     }
     onScrolled: delta => {

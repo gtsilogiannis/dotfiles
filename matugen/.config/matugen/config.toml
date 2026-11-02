@@ -11,14 +11,6 @@ output_path = '~/.config/hypr/colors.lua'
 input_path = '~/.config/matugen/templates/hyprlock.conf'
 output_path = '~/.config/hypr/hyprlock-colors.conf'
 
-[templates.waybar]
-input_path = '~/.config/matugen/templates/gtk-colors.css'
-output_path = '~/.config/waybar/colors.css'
-
-[templates.swaync]
-input_path = '~/.config/matugen/templates/gtk-colors.css'
-output_path = '~/.config/swaync/colors.css'
-
 [templates.rofi]
 input_path = '~/.config/matugen/templates/rofi.rasi'
 output_path = '~/.config/rofi/colors.rasi'

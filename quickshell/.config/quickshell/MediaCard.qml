@@ -9,8 +9,6 @@ Card {
     readonly property var players: Mpris.players.values.filter(p => !/firefox|zen|chrom/i.test(p.identity + p.dbusName))
     readonly property var player: players.find(p => p.isPlaying) ?? players[0] ?? null
 
-    visible: player !== null
-
     RowLayout {
         spacing: 12
 
