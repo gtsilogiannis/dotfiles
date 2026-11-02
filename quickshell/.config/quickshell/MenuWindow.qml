@@ -1,4 +1,4 @@
-// Full-screen layer for one menu (launcher, clipboard, power, wallpaper): a light
+// Full-screen layer for one menu (launcher, clipboard, power, wallpaper, overview): a light
 // dim over the screen and a rounded panel in the middle. A click on the dim or
 // Esc in the menu closes it. Keyboard input goes only to the menu while it is open.
 import QtQuick

@@ -22,4 +22,5 @@ ShellRoot {
     Clipboard {}
     PowerMenu {}
     WallpaperPicker {}
+    Overview {}
 }

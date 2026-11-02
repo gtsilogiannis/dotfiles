@@ -1,4 +1,4 @@
-// Which full-screen menu is open: launcher, clipboard, power or wallpaper.
+// Which full-screen menu is open: launcher, clipboard, power, wallpaper or overview.
 // Only one at a time; opening one closes the others.
 pragma Singleton
 
