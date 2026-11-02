@@ -4,6 +4,7 @@ Name=Spotify
 GenericName=Music Player
 Icon=spotify-launcher
 Exec=spotify-launcher %U
+StartupWMClass=spotify
 Terminal=false
 Categories=Audio;Music;Player;AudioVideo;
 MimeType=x-scheme-handler/spotify;
