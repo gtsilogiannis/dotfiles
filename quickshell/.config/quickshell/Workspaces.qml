@@ -28,7 +28,7 @@ RowLayout {
             radius: height / 2
             color: focused ? Theme.primary
                  : ws?.urgent ? Theme.error
-                 : occupied ? Theme.onSurfaceVariant
+                 : occupied ? Theme.surfaceTextMuted
                  : Theme.outlineVariant
 
             Behavior on implicitWidth { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }

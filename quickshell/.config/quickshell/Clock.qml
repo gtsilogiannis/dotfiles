@@ -9,7 +9,7 @@ Text {
     }
 
     text: Qt.formatDateTime(clock.date, "HH:mm  ·  ddd d MMM")
-    color: Theme.onSurface
+    color: Theme.surfaceText
     font.family: Theme.fontFamily
     font.pixelSize: Theme.fontSize + 2
     font.weight: Font.Medium

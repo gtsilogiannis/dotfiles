@@ -9,21 +9,30 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    // Last palette that parsed correctly; a half-written file keeps the previous one.
-    property var palette: ({})
+    // Last scheme that parsed correctly; a half-written file keeps the previous one.
+    // (Named "scheme", not "palette": Item already has a palette property in Qt 6.)
+    property var scheme: ({})
 
-    // Fallbacks are used until colors.json exists (first run before matugen).
-    readonly property color surface:              palette.surface ?? "#11131a"
-    readonly property color surfaceContainer:     palette.surface_container ?? "#1d2027"
-    readonly property color surfaceContainerHigh: palette.surface_container_high ?? "#272a31"
-    readonly property color onSurface:            palette.on_surface ?? "#e1e2eb"
-    readonly property color onSurfaceVariant:     palette.on_surface_variant ?? "#c4c6d0"
-    readonly property color primary:              palette.primary ?? "#adc6ff"
-    readonly property color onPrimary:            palette.on_primary ?? "#102f60"
-    readonly property color tertiary:             palette.tertiary ?? "#ddbce0"
-    readonly property color error:                palette.error ?? "#ffb4ab"
-    readonly property color outline:              palette.outline ?? "#8e9099"
-    readonly property color outlineVariant:       palette.outline_variant ?? "#44474f"
+    // Returns the matugen color for key, or the fallback until colors.json exists.
+    // Reading root.scheme inside the function makes every color binding update with it.
+    function pick(key, fallback) {
+        const value = root.scheme[key];
+        return (typeof value === "string" && value.length > 0) ? value : fallback;
+    }
+
+    // Material 3 roles. The on_* roles are named *Text here, because names that
+    // start with "on" + capital letter are the QML signal-handler pattern.
+    readonly property color surface:              pick("surface", "#11131a")
+    readonly property color surfaceContainer:     pick("surface_container", "#1d2027")
+    readonly property color surfaceContainerHigh: pick("surface_container_high", "#272a31")
+    readonly property color surfaceText:          pick("on_surface", "#e1e2eb")
+    readonly property color surfaceTextMuted:     pick("on_surface_variant", "#c4c6d0")
+    readonly property color primary:              pick("primary", "#adc6ff")
+    readonly property color primaryText:          pick("on_primary", "#102f60")
+    readonly property color tertiary:             pick("tertiary", "#ddbce0")
+    readonly property color error:                pick("error", "#ffb4ab")
+    readonly property color outline:              pick("outline", "#8e9099")
+    readonly property color outlineVariant:       pick("outline_variant", "#44474f")
 
     // Geometry follows Hyprland: gaps_out = 8, rounding = 12.
     readonly property int gap: 8
@@ -41,9 +50,10 @@ Singleton {
         onFileChanged: reload()
         onLoaded: {
             try {
-                root.palette = JSON.parse(text());
+                root.scheme = JSON.parse(text());
+                console.info("Theme: loaded colors.json, text color", root.surfaceText);
             } catch (e) {
-                console.warn("Theme: colors.json could not be parsed, keeping the previous palette");
+                console.warn("Theme: colors.json could not be parsed, keeping the previous colors");
             }
         }
     }
