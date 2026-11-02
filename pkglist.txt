@@ -61,6 +61,7 @@ playerctl
 python-pip
 python-scapy
 qt6-wayland
+quickshell
 rofi
 scrcpy
 sddm
@@ -77,6 +78,7 @@ thunar-archive-plugin
 thunar-volman
 ttf-caladea
 ttf-jetbrains-mono-nerd
+ttf-material-symbols-variable
 tumbler
 unzip
 usbutils
