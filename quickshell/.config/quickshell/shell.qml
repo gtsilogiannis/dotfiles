@@ -21,4 +21,5 @@ ShellRoot {
     Launcher {}
     Clipboard {}
     PowerMenu {}
+    WallpaperPicker {}
 }
