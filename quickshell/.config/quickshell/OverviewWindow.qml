@@ -40,31 +40,30 @@ Item {
         color: Qt.alpha(Theme.surfaceContainer, 0.9)
         clip: true
 
-        // The preview is drawn at the full size of the captured buffer into a mipmapped
-        // layer, then scaled down to the tile: the GPU averages the right mip level, so
-        // text and edges stay sharp. (A shrink of 3-4x from a single level drops pixels
-        // and looks jagged or blurry.) Until the first frame arrives: twice the tile size.
+        // Downscaling a window 3-4x: render it into a texture at 4x the preview size,
+        // then halve twice. Each exact 2:1 step with linear filtering averages 2x2
+        // pixels (a box filter), which keeps text sharp. Mipmaps blend two levels and
+        // blur; a single bilinear shrink drops pixels and looks jagged.
         Item {
-            id: scaled
-            readonly property real sourceWidth: preview.hasContent && preview.sourceSize.width > 0 ? preview.sourceSize.width : parent.width * 2
-            readonly property real sourceHeight: preview.hasContent && preview.sourceSize.height > 0 ? preview.sourceSize.height : parent.height * 2
-
-            width: sourceWidth
-            height: sourceHeight
-            transform: Scale {
-                xScale: root.width / Math.max(1, scaled.sourceWidth)
-                yScale: root.height / Math.max(1, scaled.sourceHeight)
-            }
+            anchors.fill: parent
             layer.enabled: preview.hasContent
             layer.smooth: true
-            layer.mipmap: true
+            layer.textureSize: Qt.size(root.width * 2, root.height * 2)
 
-            // Capture only while the overview is open; null frees the buffer when it closes.
-            ScreencopyView {
-                id: preview
+            Item {
                 anchors.fill: parent
-                captureSource: root.overview.visible ? root.toplevel?.wayland ?? null : null
-                live: false
+                layer.enabled: preview.hasContent
+                layer.smooth: true
+                layer.textureSize: Qt.size(root.width * 4, root.height * 4)
+
+                // Capture only while the overview is open; null frees the buffer when it closes.
+                ScreencopyView {
+                    id: preview
+                    anchors.fill: parent
+                    smooth: true
+                    captureSource: root.overview.visible ? root.toplevel?.wayland ?? null : null
+                    live: false
+                }
             }
         }
 
