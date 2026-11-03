@@ -16,6 +16,7 @@ PanelWindow {
     property alias panelColor: panel.color
     property real dimOpacity: 0.15          // above ignore_alpha (0.2) Hyprland also blurs the screen behind
     property bool animated: false           // fade + zoom the panel in on open
+    property bool framed: true              // false: no panel background, clicks between the items close the menu
 
     signal opened                           // reset the menu and give the focus here
 
@@ -58,10 +59,11 @@ PanelWindow {
         width: root.panelWidth
         height: root.panelHeight
         radius: 20
-        color: Qt.alpha(Theme.surface, 0.8)
-        border.width: 1
+        color: root.framed ? Qt.alpha(Theme.surface, 0.8) : "transparent"
+        border.width: root.framed ? 1 : 0
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
 
-        MouseArea { anchors.fill: parent }      // clicks on the panel do not reach the dim
+        // Clicks on the panel do not reach the dim; without a frame they do.
+        MouseArea { anchors.fill: parent; enabled: root.framed }
     }
 }

@@ -10,7 +10,7 @@ Item {
     id: root
 
     required property var toplevel          // HyprlandToplevel
-    required property Item tile             // the workspace tile (scaleFactor, mon)
+    required property Item tile             // the workspace tile (scaleFactor, mon, globalIndex)
     required property var overview          // Overview.qml
 
     readonly property var ipc: toplevel?.lastIpcObject ?? ({})
@@ -120,7 +120,7 @@ Item {
         property point pressedAt
         property bool dragging: false
 
-        onEntered: if (root.overview.dragged === null) root.overview.selected = root.tile.index
+        onEntered: if (root.overview.dragged === null) root.overview.selected = root.tile.globalIndex
         onPressed: mouse => {
             pressedAt = Qt.point(mouse.x, mouse.y);
             dragging = false;
