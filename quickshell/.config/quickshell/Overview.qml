@@ -67,9 +67,9 @@ MenuWindow {
         const byWidth = (screenW * 0.9 - (first.length - 1) * columnSpacing) / Math.max(1, units);
         const availH = screenH * 0.85 - searchHeight - helpHeight - 2 * 20;
         const byHeight = ((availH - (rows - 1) * rowSpacing) / rows - labelHeight - 6) * monitorWidth / monitorHeight;
-        return Math.max(120, Math.min(screenW * 0.3, byWidth, byHeight));
+        return Math.floor(Math.max(120, Math.min(screenW * 0.3, byWidth, byHeight)));   // whole pixels, as the windows
     }
-    readonly property real tileHeight: tileWidth * monitorHeight / monitorWidth
+    readonly property real tileHeight: Math.round(tileWidth * monitorHeight / monitorWidth)
 
     property int selected: 0                // index in shownIds chosen with the keyboard
     property var dragged: null              // HyprlandToplevel being dragged

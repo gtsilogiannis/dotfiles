@@ -23,10 +23,11 @@ Item {
     readonly property string geometryKey: placed ? `${ipc.at}|${ipc.size}` : ""
 
     visible: placed
-    x: placed ? (ipc.at[0] - tile.mon.x) * tile.scaleFactor : 0
-    y: placed ? (ipc.at[1] - tile.mon.y) * tile.scaleFactor : 0
-    width: placed ? Math.max(8, ipc.size[0] * tile.scaleFactor) : 0
-    height: placed ? Math.max(8, ipc.size[1] * tile.scaleFactor) : 0
+    // Whole pixels: a texture drawn at a fractional offset is resampled and looks soft.
+    x: placed ? Math.round((ipc.at[0] - tile.mon.x) * tile.scaleFactor) : 0
+    y: placed ? Math.round((ipc.at[1] - tile.mon.y) * tile.scaleFactor) : 0
+    width: placed ? Math.max(8, Math.round(ipc.size[0] * tile.scaleFactor)) : 0
+    height: placed ? Math.max(8, Math.round(ipc.size[1] * tile.scaleFactor)) : 0
     z: ipc.floating ? 2 : 1                 // floating windows above tiled ones, as on screen
     opacity: root.overview.dragged === toplevel ? 0.35 : dimmed ? 0.25 : 1
 
@@ -39,13 +40,21 @@ Item {
         color: Qt.alpha(Theme.surfaceContainer, 0.9)
         clip: true
 
-        // The preview is drawn at twice the tile size into a mipmapped layer and scaled
-        // down by half: a plain bilinear shrink of a full-size window looks jagged.
+        // The preview is drawn at the full size of the captured buffer into a mipmapped
+        // layer, then scaled down to the tile: the GPU averages the right mip level, so
+        // text and edges stay sharp. (A shrink of 3-4x from a single level drops pixels
+        // and looks jagged or blurry.) Until the first frame arrives: twice the tile size.
         Item {
-            width: parent.width * 2
-            height: parent.height * 2
-            scale: 0.5
-            transformOrigin: Item.TopLeft
+            id: scaled
+            readonly property real sourceWidth: preview.hasContent && preview.sourceSize.width > 0 ? preview.sourceSize.width : parent.width * 2
+            readonly property real sourceHeight: preview.hasContent && preview.sourceSize.height > 0 ? preview.sourceSize.height : parent.height * 2
+
+            width: sourceWidth
+            height: sourceHeight
+            transform: Scale {
+                xScale: root.width / Math.max(1, scaled.sourceWidth)
+                yScale: root.height / Math.max(1, scaled.sourceHeight)
+            }
             layer.enabled: preview.hasContent
             layer.smooth: true
             layer.mipmap: true
