@@ -11,6 +11,14 @@ hl.monitor({
 })
 
 hl.monitor({
+    output   = "desc:AOC 24G2WG3",
+    mode     = "1920x1080@144",
+    position = "auto-right",
+    scale    = "1",
+    vrr      = 0,
+})
+
+hl.monitor({
     output   = "",
     mode     = "preferred",
     position = "auto-right",
