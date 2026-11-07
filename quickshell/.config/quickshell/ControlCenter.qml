@@ -65,7 +65,7 @@ PanelWindow {
             spacing: 10
 
             GridLayout {
-                columns: 4
+                columns: 3
                 columnSpacing: 8
                 Layout.fillWidth: true
 
@@ -102,6 +102,21 @@ PanelWindow {
                     label: "Night"
                     active: NightLight.active
                     onClicked: NightLight.toggle()
+                }
+                // Same as SUPER + CTRL + BackSpace (mode.sh toggle).
+                QuickToggle {
+                    icon: "center_focus_strong"
+                    label: "Focus"
+                    active: ModeState.focus
+                    onClicked: ModeState.toggleMode()
+                }
+                // Glass (translucent) windows; SUPER + BackSpace. Focus windows are always opaque.
+                QuickToggle {
+                    icon: "blur_on"
+                    label: "Glass"
+                    available: !ModeState.focus
+                    active: !ModeState.focus && !ModeState.opaque
+                    onClicked: ModeState.toggleOpaque()
                 }
             }
 

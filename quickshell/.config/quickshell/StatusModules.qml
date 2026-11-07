@@ -1,5 +1,6 @@
 // Right side of the bar, left to right: tray, updates, temperature, CPU, RAM,
-// volume, notifications, network, battery, power.
+// volume, notifications, network, battery, power. In focus mode the updates
+// pill is hidden and temperature, CPU and RAM share one pill.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -21,6 +22,7 @@ RowLayout {
     Tray { window: root.window }
 
     Stat {
+        visible: !ModeState.focus
         icon: "inventory_2"
         value: String(SystemStats.updates)
         accent: SystemStats.updates > 0 ? Theme.tertiary : Theme.primary
@@ -40,6 +42,7 @@ RowLayout {
     }
 
     Stat {
+        visible: !ModeState.focus
         icon: "thermostat"
         value: `${Math.round(SystemStats.temp)}°`
         accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary     // same threshold as Waybar
@@ -47,14 +50,25 @@ RowLayout {
     }
 
     Stat {
+        visible: !ModeState.focus
         icon: "memory"
         value: `${Math.round(SystemStats.cpu * 100)}%`
         onClicked: root.openMonitor()
     }
 
     Stat {
+        visible: !ModeState.focus
         icon: "memory_alt"
         value: `${Math.round(SystemStats.ram * 100)}%`
+        onClicked: root.openMonitor()
+    }
+
+    // Focus: temperature · CPU · RAM in one pill, e.g. 52° · 6% · 31%.
+    Stat {
+        visible: ModeState.focus
+        icon: "monitoring"
+        value: `${Math.round(SystemStats.temp)}° · ${Math.round(SystemStats.cpu * 100)}% · ${Math.round(SystemStats.ram * 100)}%`
+        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary
         onClicked: root.openMonitor()
     }
 

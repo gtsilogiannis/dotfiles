@@ -20,7 +20,11 @@ PanelWindow {
     Rectangle {
         anchors.fill: parent
         radius: Theme.radius
-        color: Qt.alpha(Theme.surface, 0.55)
+        // Glass in browsing; almost opaque in focus, where Hyprland also drops the blur.
+        // Only the alpha animates here: Theme already fades the color itself.
+        property real glass: ModeState.focus ? 0.92 : 0.55
+        Behavior on glass { NumberAnimation { duration: Theme.colorFade } }
+        color: Qt.alpha(Theme.surface, glass)
         border.width: 1
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
 

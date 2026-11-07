@@ -16,6 +16,7 @@ ShellRoot {
     NotificationPopups {}
     ControlCenter {}
     CalendarPopup {}
+    ModeOsd {}
 
     // Menus: one at a time, switched through MenuState (qs ipc call menu toggle <name>).
     Launcher {}
