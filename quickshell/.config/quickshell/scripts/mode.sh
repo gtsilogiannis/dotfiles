@@ -50,7 +50,8 @@ switch_to() {
 
     # Written before the wallpaper so set-wallpaper.sh picks the target's color scheme.
     printf '%s\n' "$target" > "$state/mode"
-    "$scripts/set-wallpaper.sh" "$next"
+    # A failed wallpaper or color step must not leave Hyprland in the old mode.
+    "$scripts/set-wallpaper.sh" "$next" || echo "mode.sh: set-wallpaper.sh failed, colors unchanged" >&2
 
     # Hyprland reads the mode file while loading its config (borders, opacity, animations).
     hyprctl reload >/dev/null

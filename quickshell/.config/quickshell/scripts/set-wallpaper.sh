@@ -16,9 +16,14 @@ case "$mode" in
     *)     scheme="scheme-vibrant" ;;
 esac
 
-# A mode switch that keeps the wallpaper only changes the colors.
+# A mode switch that keeps the wallpaper only changes the colors. The cached
+# copy itself (mode.sh's fallback when no source path is known) is never
+# recorded as a source, or a later wallpaper change would overwrite it.
+cache="$HOME/.cache/current_wallpaper.png"
 current=$(cat "$HOME/.cache/current_wallpaper.path" 2>/dev/null || true)
-if [[ "$wall" != "$current" ]]; then
+is_cache=0
+[[ "$wall" -ef "$cache" ]] && is_cache=1
+if [[ $is_cache -eq 0 && "$wall" != "$current" ]]; then
     if ! pgrep -x awww-daemon >/dev/null; then
         awww-daemon --format xrgb &
         sleep 1
@@ -28,13 +33,15 @@ if [[ "$wall" != "$current" ]]; then
 
     # Read at login (autostart) and by hyprlock; the .path file marks the current one in the picker.
     mkdir -p "$HOME/.cache"
-    cp -f "$wall" "$HOME/.cache/current_wallpaper.png"
+    cp -f "$wall" "$cache"
     printf '%s\n' "$wall" > "$HOME/.cache/current_wallpaper.path"
 fi
 
 # Each mode remembers its own wallpaper.
-mkdir -p "$state"
-printf '%s\n' "$wall" > "$state/wallpaper-$mode"
+if [[ $is_cache -eq 0 ]]; then
+    mkdir -p "$state"
+    printf '%s\n' "$wall" > "$state/wallpaper-$mode"
+fi
 
 # --source-color-index 0: without it matugen asks interactively which color to use.
 matugen image "$wall" -t "$scheme" -m dark --source-color-index 0
