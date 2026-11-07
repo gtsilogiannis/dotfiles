@@ -47,6 +47,8 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("hypridle &")
     hl.exec_cmd("wl-paste --type text --watch cliphist store &")
     hl.exec_cmd("wl-paste --type image --watch cliphist store &")
+    -- Every session starts in browsing; switches back if the last one ended in focus.
+    hl.exec_cmd("sleep 2 && ~/.config/quickshell/scripts/mode.sh init &")
 end)
 
 -------------------------------
@@ -74,6 +76,7 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 local colors = {
     primary         = "rgba(00f5ffcc)",
     tertiary        = "rgba(ff007fcc)",
+    outline         = "rgba(8e9099ff)",
     outline_variant = "rgba(24273aaa)",
 }
 local ok, generated = pcall(function()
@@ -83,6 +86,19 @@ if ok and type(generated) == "table" then
     colors = generated
 end
 
+-- Desktop mode, written by ~/.config/quickshell/scripts/mode.sh, which reloads
+-- Hyprland after every switch. Browsing: rotating gradient border, translucent
+-- windows. Focus: static border, opaque windows, calmer animations.
+local mode = "browsing"
+pcall(function()
+    local file = io.open(os.getenv("HOME") .. "/.local/state/desktop/mode", "r")
+    if file then
+        if file:read("*l") == "focus" then mode = "focus" end
+        file:close()
+    end
+end)
+local focus = mode == "focus"
+
 hl.config({
     general = {
         gaps_in  = 4,
@@ -90,7 +106,8 @@ hl.config({
         border_size = 2,
 
         col = {
-            active_border   = { colors = { colors.primary, colors.tertiary }, angle = 45 },
+            active_border   = focus and colors.outline
+                              or { colors = { colors.primary, colors.tertiary }, angle = 45 },
             inactive_border = colors.outline_variant,
         },
 
@@ -103,8 +120,8 @@ hl.config({
         rounding        = 12,
         rounding_power  = 2,
 
-        active_opacity   = 0.97,
-        inactive_opacity = 0.90,
+        active_opacity   = focus and 1.0 or 0.97,
+        inactive_opacity = focus and 1.0 or 0.90,
 
         shadow = {
             enabled      = true,
@@ -137,9 +154,11 @@ hl.config({
     },
 })
 
--- Blur behind the bar, the menus and the notifications.
+-- Blur behind the bar, the menus and the notifications (in focus not behind the bar).
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
-for _, namespace in ipairs({ "quickshell-bar", "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu" }) do
+local blurred = { "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu" }
+if not focus then table.insert(blurred, "quickshell-bar") end
+for _, namespace in ipairs(blurred) do
     hl.layer_rule({
         name         = "blur-" .. namespace,
         match        = { namespace = "^" .. namespace .. "$" },
@@ -156,15 +175,28 @@ hl.curve("wind",   { type = "bezier", points = { {0.05, 0.9}, {0.1, 1.05} } })
 hl.curve("winIn",  { type = "bezier", points = { {0.1, 1.1},  {0.1, 1.05} } })
 hl.curve("winOut", { type = "bezier", points = { {0.3, -0.3}, {0, 1} } })
 hl.curve("liner",  { type = "bezier", points = { {0, 0},      {1, 1} } })
+hl.curve("calm",   { type = "bezier", points = { {0.25, 1},   {0.5, 1} } })
 
-hl.animation({ leaf = "windows",     enabled = true, speed = 6,  bezier = "wind",   style = "popin" })
-hl.animation({ leaf = "windowsIn",   enabled = true, speed = 6,  bezier = "winIn",  style = "popin 80%" })
-hl.animation({ leaf = "windowsOut",  enabled = true, speed = 5,  bezier = "winOut", style = "popin 80%" })
-hl.animation({ leaf = "windowsMove", enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
-hl.animation({ leaf = "border",      enabled = true, speed = 1,  bezier = "liner" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner",  style = "loop" })
-hl.animation({ leaf = "fade",        enabled = true, speed = 4,  bezier = "default" })
-hl.animation({ leaf = "workspaces",  enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
+if focus then
+    -- Same kinds of motion, shorter, smaller and without overshoot; the border stays still.
+    hl.animation({ leaf = "windows",     enabled = true,  speed = 4, bezier = "calm",  style = "popin 90%" })
+    hl.animation({ leaf = "windowsIn",   enabled = true,  speed = 4, bezier = "calm",  style = "popin 90%" })
+    hl.animation({ leaf = "windowsOut",  enabled = true,  speed = 3, bezier = "calm",  style = "popin 90%" })
+    hl.animation({ leaf = "windowsMove", enabled = true,  speed = 4, bezier = "calm",  style = "slide" })
+    hl.animation({ leaf = "border",      enabled = true,  speed = 1, bezier = "liner" })
+    hl.animation({ leaf = "borderangle", enabled = false, speed = 1, bezier = "liner" })
+    hl.animation({ leaf = "fade",        enabled = true,  speed = 3, bezier = "default" })
+    hl.animation({ leaf = "workspaces",  enabled = true,  speed = 4, bezier = "calm",  style = "slidefade 20%" })
+else
+    hl.animation({ leaf = "windows",     enabled = true, speed = 6,  bezier = "wind",   style = "popin" })
+    hl.animation({ leaf = "windowsIn",   enabled = true, speed = 6,  bezier = "winIn",  style = "popin 80%" })
+    hl.animation({ leaf = "windowsOut",  enabled = true, speed = 5,  bezier = "winOut", style = "popin 80%" })
+    hl.animation({ leaf = "windowsMove", enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
+    hl.animation({ leaf = "border",      enabled = true, speed = 1,  bezier = "liner" })
+    hl.animation({ leaf = "borderangle", enabled = true, speed = 30, bezier = "liner",  style = "loop" })
+    hl.animation({ leaf = "fade",        enabled = true, speed = 4,  bezier = "default" })
+    hl.animation({ leaf = "workspaces",  enabled = true, speed = 5,  bezier = "wind",   style = "slide" })
+end
 
 hl.config({
     dwindle = {
@@ -210,6 +242,7 @@ hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
+hl.bind(mainMod .. " + CTRL + BackSpace", hl.dsp.exec_cmd("~/.config/quickshell/scripts/mode.sh toggle"))
 
 -- Screenshots (grim + slurp) + Lock Screen + Power menu (Alt F4) + Clipboard history (Alt ,)
 
