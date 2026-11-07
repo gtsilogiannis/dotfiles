@@ -56,10 +56,12 @@ Singleton {
         }
     }
 
-    // qs ipc call notifications toggleDnd | clear
+    // qs ipc call notifications toggleDnd | setDnd <true|false> | getDnd | clear
     IpcHandler {
         target: "notifications"
         function toggleDnd(): void { root.dnd = !root.dnd; }
+        function setDnd(on: bool): void { root.dnd = on; }      // used by mode.sh
+        function getDnd(): bool { return root.dnd; }
         function clear(): void { root.clearAll(); }
     }
 }

@@ -1,23 +1,40 @@
 #!/usr/bin/env bash
-# Applies a wallpaper chosen in the wallpaper picker: awww on every output,
-# a copy for hyprlock and the next login, and new colors from matugen for
-# every themed app (Hyprland borders, kitty, GTK, Quickshell).
+# Applies a wallpaper chosen in the wallpaper picker or by mode.sh: awww on
+# every output, a copy for hyprlock and the next login, and new colors from
+# matugen for every themed app (Hyprland borders, kitty, GTK, Quickshell).
 set -euo pipefail
 
 wall="$1"
 [[ -f "$wall" ]] || { echo "not a file: $wall" >&2; exit 1; }
 
-if ! pgrep -x awww-daemon >/dev/null; then
-    awww-daemon --format xrgb &
-    sleep 1
+# The color scheme follows the desktop mode (mode.sh): vibrant in browsing,
+# monochrome in focus. Both stay dark for now.
+state="$HOME/.local/state/desktop"
+mode=$(cat "$state/mode" 2>/dev/null || echo browsing)
+case "$mode" in
+    focus) scheme="scheme-monochrome" ;;
+    *)     scheme="scheme-vibrant" ;;
+esac
+
+# A mode switch that keeps the wallpaper only changes the colors.
+current=$(cat "$HOME/.cache/current_wallpaper.path" 2>/dev/null || true)
+if [[ "$wall" != "$current" ]]; then
+    if ! pgrep -x awww-daemon >/dev/null; then
+        awww-daemon --format xrgb &
+        sleep 1
+    fi
+
+    awww img "$wall" --transition-type wipe --transition-angle 30 --transition-step 90 --transition-fps 144
+
+    # Read at login (autostart) and by hyprlock; the .path file marks the current one in the picker.
+    mkdir -p "$HOME/.cache"
+    cp -f "$wall" "$HOME/.cache/current_wallpaper.png"
+    printf '%s\n' "$wall" > "$HOME/.cache/current_wallpaper.path"
 fi
 
-awww img "$wall" --transition-type wipe --transition-angle 30 --transition-step 90 --transition-fps 144
-
-# Read at login (autostart) and by hyprlock; the .path file marks the current one in the picker.
-mkdir -p "$HOME/.cache"
-cp -f "$wall" "$HOME/.cache/current_wallpaper.png"
-printf '%s\n' "$wall" > "$HOME/.cache/current_wallpaper.path"
+# Each mode remembers its own wallpaper.
+mkdir -p "$state"
+printf '%s\n' "$wall" > "$state/wallpaper-$mode"
 
 # --source-color-index 0: without it matugen asks interactively which color to use.
-matugen image "$wall" -t scheme-tonal-spot --source-color-index 0
+matugen image "$wall" -t "$scheme" -m dark --source-color-index 0
