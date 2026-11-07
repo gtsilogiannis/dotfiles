@@ -99,6 +99,20 @@ pcall(function()
 end)
 local focus = mode == "focus"
 
+-- Browsing only: mode.sh opaque (SUPER + BackSpace) turns the glass windows opaque.
+-- Every login starts with glass (mode.sh init writes "off").
+local opaque = false
+if not focus then
+    pcall(function()
+        local file = io.open(os.getenv("HOME") .. "/.local/state/desktop/opaque", "r")
+        if file then
+            opaque = file:read("*l") == "on"
+            file:close()
+        end
+    end)
+end
+local solid = focus or opaque
+
 hl.config({
     general = {
         gaps_in  = 4,
@@ -120,8 +134,8 @@ hl.config({
         rounding        = 12,
         rounding_power  = 2,
 
-        active_opacity   = focus and 1.0 or 0.97,
-        inactive_opacity = focus and 1.0 or 0.90,
+        active_opacity   = solid and 1.0 or 0.97,
+        inactive_opacity = solid and 1.0 or 0.90,
 
         shadow = {
             enabled      = true,
@@ -156,7 +170,7 @@ hl.config({
 
 -- Blur behind the bar, the menus and the notifications (in focus not behind the bar).
 -- ignore_alpha skips fully transparent pixels so only the panels are blurred.
-local blurred = { "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu" }
+local blurred = { "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu", "quickshell-osd" }
 if not focus then table.insert(blurred, "quickshell-bar") end
 for _, namespace in ipairs(blurred) do
     hl.layer_rule({
@@ -243,6 +257,7 @@ hl.bind(mainMod .. " + V",      hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + J",      hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + CTRL + BackSpace", hl.dsp.exec_cmd("~/.config/quickshell/scripts/mode.sh toggle"))
+hl.bind(mainMod .. " + BackSpace",        hl.dsp.exec_cmd("~/.config/quickshell/scripts/mode.sh opaque toggle"))
 
 -- Screenshots (grim + slurp) + Lock Screen + Power menu (Alt F4) + Clipboard history (Alt ,)
 
@@ -310,3 +325,9 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- Video, images, documents, the browser and Spotify stay fully opaque in every mode.
+hl.window_rule({
+    name    = "always-opaque",
+    match   = { class = [[^(mpv|org\.gnome\.Loupe|org\.gnome\.Evince|evince|ONLYOFFICE|DesktopEditors|firefox|[Ss]potify)$]] },
+    opacity = "1.0 override 1.0 override",
+})
