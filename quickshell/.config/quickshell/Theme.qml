@@ -59,7 +59,10 @@ Singleton {
     readonly property int pillHeight: barHeight - 10   // 24 px: 5 px of bar visible above and below
     readonly property int spacing: 6                    // between pills and inside them
 
-    readonly property string fontFamily: "JetBrainsMono Nerd Font"
+    // Text in IBM Plex Sans; numbers, times and commands in Maple Mono, whose equal-width
+    // digits keep values from shifting the layout as they change.
+    readonly property string fontFamily: "IBM Plex Sans"
+    readonly property string monoFamily: "Maple Mono NF"
     readonly property int fontSize: 12
     // Variable icon font from ttf-material-symbols-variable; icons are typed by name (ligatures).
     readonly property string iconFamily: "Material Symbols Rounded"

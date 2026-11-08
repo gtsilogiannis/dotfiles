@@ -227,6 +227,7 @@ MenuWindow {
                 color: root.mode === "calc" && root.calc.ok ? Theme.primary
                      : root.mode === "calc" && root.calc.text !== "" ? Theme.error
                      : Theme.surfaceText
+                font.family: Theme.monoFamily
                 font.pixelSize: root.mode === "calc" && root.calc.ok ? 30 : Theme.fontSize + 3
                 font.weight: Font.DemiBold
                 wrapMode: Text.WrapAnywhere

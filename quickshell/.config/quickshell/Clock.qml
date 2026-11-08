@@ -15,6 +15,7 @@ Pill {
     MaterialIcon { icon: "schedule"; color: Theme.primary }
     Label {
         text: Qt.formatDateTime(clock.date, "HH:mm  ·  ddd d MMM")
+        font.family: Theme.monoFamily
         font.weight: Font.Medium
     }
 }

@@ -10,5 +10,5 @@ Pill {
     property color accent: Theme.primary        // icon color; Theme.error for warnings
 
     MaterialIcon { icon: stat.icon; filled: stat.filled; color: stat.accent }
-    Label { text: stat.value; visible: stat.value !== "" }
+    Label { text: stat.value; visible: stat.value !== ""; font.family: Theme.monoFamily }
 }

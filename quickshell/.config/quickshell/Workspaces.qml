@@ -76,6 +76,7 @@ RowLayout {
                 anchors.centerIn: parent
                 visible: chip.appIds.length === 0
                 text: chip.wsId
+                font.family: Theme.monoFamily
                 color: chip.focused ? Theme.primary : Theme.surfaceTextMuted
                 font.weight: chip.focused ? Font.Bold : Font.Normal
             }

@@ -68,7 +68,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             text: parent.percent
             color: parent.tint
-            font.family: Theme.fontFamily
+            font.family: Theme.monoFamily
             font.pixelSize: 10
             font.weight: Font.Bold
             font.letterSpacing: -0.5
