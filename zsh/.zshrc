@@ -81,12 +81,22 @@ source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 zstyle ':fzf-tab:*' switch-group '<' '>'
 # Preview: directory listing for directories, the first lines of a file otherwise.
-zstyle ':fzf-tab:complete:(cd|z|zi|l|ll|la|lt|eza|ls|bat|cat|micro|v|nvim|rm|cp|mv):*' fzf-preview \
+zstyle ':fzf-tab:complete:(cd|z|zi|y|l|ll|la|lt|eza|ls|bat|cat|micro|v|nvim|rm|cp|mv):*' fzf-preview \
     '[[ -d $realpath ]] && eza -1 --icons=always --color=always $realpath || bat --color=always --style=numbers --line-range=:100 $realpath 2>/dev/null'
 zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
 
 # zoxide: z <part of a path> jumps to the most used match, zi picks one with fzf.
 eval "$(zoxide init zsh)"
+
+# yazi: y opens it here, and quitting with q leaves the shell in the last directory (Q does not).
+y() {
+    local tmp cwd
+    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [[ -n "$cwd" && "$cwd" != "$PWD" && -d "$cwd" ]] && builtin cd -- "$cwd"
+    command rm -f -- "$tmp"
+}
 
 # Suggestions from history first, then from completion; accept with Right or End.
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
