@@ -66,6 +66,8 @@ hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("NVD_BACKEND", "direct")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+-- quickshell links jemalloc: keep its heap off transparent huge pages
+hl.env("MALLOC_CONF", "thp:never")
 
 -----------------------
 ---- LOOK AND FEEL ----
