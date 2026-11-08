@@ -23,6 +23,10 @@ output_path = '~/.config/starship.toml'
 input_path = '~/.config/matugen/templates/zsh.zsh'
 output_path = '~/.config/zsh/colors.zsh'
 
+[templates.yazi]
+input_path = '~/.config/matugen/templates/yazi.toml'
+output_path = '~/.config/yazi/theme.toml'
+
 [templates.quickshell]
 input_path = '~/.config/matugen/templates/quickshell.json'
 output_path = '~/.config/quickshell/colors.json'

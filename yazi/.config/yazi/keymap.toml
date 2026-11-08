@@ -1,0 +1,26 @@
+# Extra keys on top of the defaults (F1 or ~ lists every binding).
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "." ]
+run  = "cd ~/dotfiles"
+desc = "Cd to ~/dotfiles"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "p" ]
+run  = "cd ~/Pictures"
+desc = "Cd to ~/Pictures"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "w" ]
+run  = "cd ~/Pictures/wallpapers"
+desc = "Cd to the wallpapers"
+
+[[mgr.prepend_keymap]]
+on   = "!"
+run  = 'shell "$SHELL" --block'
+desc = "Open a shell here (exit to return)"
+
+[[mgr.prepend_keymap]]
+on   = "<C-n>"
+run  = "shell 'nautilus --new-window .' --orphan"
+desc = "Open this directory in Nautilus"
