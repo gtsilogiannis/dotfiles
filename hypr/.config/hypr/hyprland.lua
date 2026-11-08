@@ -31,7 +31,7 @@ hl.monitor({
 --------------------------
 
 local terminal    = "kitty"
-local fileManager = "thunar"
+local fileManager = "nautilus --new-window"
 local menu        = "qs ipc call menu toggle launcher"
 local browser     = "firefox"
 
@@ -254,6 +254,7 @@ local mainMod = "SUPER"
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e yazi"))
 hl.bind(mainMod .. " + N",      hl.dsp.exec_cmd("qs ipc call controlcenter toggle"))
 hl.bind(mainMod .. " + SPACE",  hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",      hl.dsp.exec_cmd(browser))
