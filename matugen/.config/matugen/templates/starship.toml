@@ -29,6 +29,7 @@ read_only = ' 󰌾'
 read_only_style = 'err'
 truncation_length = 3
 truncation_symbol = '…/'
+truncate_to_repo = false
 
 [git_branch]
 symbol = ' '
