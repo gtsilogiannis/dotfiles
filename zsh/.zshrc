@@ -95,14 +95,6 @@ alias sysclean='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null; sudo paccache -rk1
 # FPL RUNNER
 alias fpl='cd ~/FPL && source venv/bin/activate'
 
-# Show the active venv in the right prompt (RPROMPT)
-setopt prompt_subst
-show_virtual_env() {
-    if [[ -n "$VIRTUAL_ENV" ]]; then
-        echo "(%F{cyan}$(basename "$VIRTUAL_ENV")%f) "
-    fi
-}
-RPROMPT='$(show_virtual_env)'
 export PATH="$HOME/.local/bin:$PATH"
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 ssh-add -l >/dev/null 2>&1; [[ $? -eq 1 ]] && ssh-add ~/.ssh/id_ed25519

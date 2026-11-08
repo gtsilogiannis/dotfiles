@@ -15,6 +15,10 @@ output_path = '~/.config/hypr/hyprlock-colors.conf'
 input_path = '~/.config/matugen/templates/kitty.conf'
 output_path = '~/.config/kitty/colors.conf'
 
+[templates.starship]
+input_path = '~/.config/matugen/templates/starship.toml'
+output_path = '~/.config/starship.toml'
+
 [templates.zsh]
 input_path = '~/.config/matugen/templates/zsh.zsh'
 output_path = '~/.config/zsh/colors.zsh'
