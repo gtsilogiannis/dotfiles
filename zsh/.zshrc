@@ -16,18 +16,20 @@ setopt extended_history share_history hist_ignore_all_dups hist_ignore_space his
 
 # Fastfetch every session, except in Zed's terminal. In kitty the logo is a random
 # PNG from ~/Pictures/fastfetch, fitted into 30 columns x 16 rows without
-# distortion (a cell is about twice as tall as it is wide); elsewhere the small Arch logo.
+# distortion (a kitty cell here is 2.34 times as tall as it is wide: 8.7 x 20.4 px);
+# elsewhere the small Arch logo.
 ff() {
     local -a args imgs
     imgs=(~/Pictures/fastfetch/*.png(N))
     if [[ $TERM == xterm-kitty ]] && (( $#imgs )); then
         local img=${imgs[RANDOM % $#imgs + 1]}
         if [[ $(file -b -- $img) =~ '([0-9]+) x ([0-9]+)' ]]; then
+            local -F cell=2.34
             local -F ratio=$(( match[1] * 1.0 / match[2] ))
-            local -i rows=$(( 30 / (2 * ratio) ))
+            local -i rows=$(( 30 / (cell * ratio) ))
             (( rows > 16 )) && rows=16
             (( rows < 1 )) && rows=1
-            local -i cols=$(( 2 * ratio * rows + 0.5 ))
+            local -i cols=$(( cell * ratio * rows + 0.5 ))
             args=(--logo "$img" --logo-type kitty --logo-width $cols --logo-height $rows)
         fi
     fi
@@ -36,6 +38,23 @@ ff() {
     if [[ $MATUGEN_PRIMARY =~ '^#[0-9a-fA-F]{6}$' ]]; then
         local hex=${MATUGEN_PRIMARY#\#}
         args+=(--color "38;2;$(( 16#${hex[1,2]} ));$(( 16#${hex[3,4]} ));$(( 16#${hex[5,6]} ))")
+    fi
+    # Hyprland resizes a new window right after it opens and kitty rewraps the text
+    # but not the image, so wait until the size has been the same for 60 ms (at most 0.5 s).
+    if [[ $TERM == xterm-kitty ]]; then
+        zmodload -F zsh/zselect b:zselect
+        local size last=$(stty size 2>/dev/null)
+        local -i same=0
+        local -i i
+        for i in {1..25}; do
+            zselect -t 2
+            size=$(stty size 2>/dev/null)
+            if [[ $size == $last ]]; then
+                (( ++same >= 3 )) && break
+            else
+                same=0 last=$size
+            fi
+        done
     fi
     fastfetch "${args[@]}"
 }
