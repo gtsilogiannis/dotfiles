@@ -68,6 +68,8 @@ hl.env("NVD_BACKEND", "direct")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 -- quickshell links jemalloc: keep its heap off transparent huge pages
 hl.env("MALLOC_CONF", "thp:never")
+-- Render Zed on the iGPU that also drives the compositor
+hl.env("ZED_DEVICE_ID", "0x468b")
 
 -----------------------
 ---- LOOK AND FEEL ----
