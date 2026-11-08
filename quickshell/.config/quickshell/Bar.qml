@@ -17,6 +17,12 @@ PanelWindow {
     // Hyprland matches this name in hl.layer_rule to blur behind the bar.
     WlrLayershell.namespace: "quickshell-bar"
 
+    // Caffeine: the bars are always mapped, so their inhibitors hold off hypridle.
+    IdleInhibitor {
+        window: bar
+        enabled: Caffeine.active
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: Theme.radius

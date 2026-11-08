@@ -34,7 +34,18 @@ PanelWindow {
     onVisibleChanged: {
         if (!visible) { ControlCenterState.page = "main"; return; }
         Brightness.refresh();           // the brightness keys may have changed it
+        Conservation.refresh();
+        PowerProfile.refresh();
+        PowerProfile.checkAccess();
         panel.forceActiveFocus();       // Esc works without clicking first
+    }
+
+    // Fn + Q switches the power profile without any event we could watch.
+    Timer {
+        interval: 2000
+        repeat: true
+        running: root.visible
+        onTriggered: PowerProfile.refresh()
     }
 
     // Click outside the panel closes it.
@@ -117,6 +128,29 @@ PanelWindow {
                     available: !ModeState.focus
                     active: !ModeState.focus && !ModeState.opaque
                     onClicked: ModeState.toggleOpaque()
+                }
+                // Charge limit near 80% (ideapad conservation mode).
+                QuickToggle {
+                    icon: "battery_saver"
+                    label: "Conservation"
+                    available: Conservation.writable
+                    active: Conservation.active
+                    onClicked: Conservation.toggle()
+                }
+                // Quiet -> Balanced -> Performance, like Fn + Q; lit when not Balanced.
+                QuickToggle {
+                    icon: PowerProfile.icon
+                    label: PowerProfile.label
+                    available: PowerProfile.writable
+                    active: PowerProfile.profile !== "" && PowerProfile.profile !== "balanced"
+                    onClicked: PowerProfile.next()
+                }
+                // No dim, lock or screen-off while on.
+                QuickToggle {
+                    icon: "coffee"
+                    label: "Caffeine"
+                    active: Caffeine.active
+                    onClicked: Caffeine.toggle()
                 }
             }
 
