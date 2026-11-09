@@ -1,5 +1,8 @@
 bibata-cursor-theme-bin
+fzf-tab-git
+maplemono-nf
 mpvpaper
+nautilus-open-any-terminal
 onlyoffice-bin
 pomotroid-bin
 sddm-astronaut-theme
