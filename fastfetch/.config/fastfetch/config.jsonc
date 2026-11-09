@@ -10,6 +10,8 @@
     }
   },
   "display": {
+    // Cut long values at the window edge: since fastfetch 2.65 they wrap and run under the image logo.
+    "disableLinewrap": true,
     "separator": "  ",
     "key": {
       "width": 10
