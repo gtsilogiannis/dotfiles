@@ -17,12 +17,13 @@ setopt extended_history share_history hist_ignore_all_dups hist_ignore_space his
 # Fastfetch every session, except in Zed's terminal. In kitty the logo is a random
 # PNG from ~/Pictures/fastfetch, fitted into 30 columns x 16 rows without
 # distortion (a kitty cell here is 2.34 times as tall as it is wide: 8.7 x 20.4 px);
-# elsewhere the small Arch logo.
+# elsewhere the small Arch logo. `ff --same` redraws with the image picked last time.
 ff() {
     local -a args imgs
     imgs=(~/Pictures/fastfetch/*.png(N))
     if [[ $TERM == xterm-kitty ]] && (( $#imgs )); then
-        local img=${imgs[RANDOM % $#imgs + 1]}
+        [[ $1 == --same && -r $_ff_img ]] || typeset -g _ff_img=${imgs[RANDOM % $#imgs + 1]}
+        local img=$_ff_img
         if [[ $(file -b -- $img) =~ '([0-9]+) x ([0-9]+)' ]]; then
             local -F cell=2.34
             local -F ratio=$(( match[1] * 1.0 / match[2] ))
@@ -39,26 +40,32 @@ ff() {
         local hex=${MATUGEN_PRIMARY#\#}
         args+=(--color "38;2;$(( 16#${hex[1,2]} ));$(( 16#${hex[3,4]} ));$(( 16#${hex[5,6]} ))")
     fi
-    # Hyprland resizes a new window right after it opens and kitty rewraps the text
-    # but not the image, so wait until the size has been the same for 60 ms (at most 0.5 s).
-    if [[ $TERM == xterm-kitty ]]; then
-        zmodload -F zsh/zselect b:zselect
-        local size last=$(stty size 2>/dev/null)
-        local -i same=0
-        local -i i
-        for i in {1..25}; do
-            zselect -t 2
-            size=$(stty size 2>/dev/null)
-            if [[ $size == $last ]]; then
-                (( ++same >= 3 )) && break
-            else
-                same=0 last=$size
-            fi
-        done
-    fi
     fastfetch "${args[@]}"
 }
-[[ -z "$ZED_TERM" ]] && ff
+if [[ -z "$ZED_TERM" ]]; then
+    ff
+    # kitty rewraps the text when the window is resized (a new window halves this one)
+    # but leaves the image where it was drawn. Until the first command runs, redraw
+    # fastfetch with the same image whenever the size really changes; after that the
+    # trap is removed, so the output of commands is never cleared.
+    if [[ $TERM == xterm-kitty ]]; then
+        typeset -g _ff_size=$(stty size 2>/dev/null)
+        TRAPWINCH() {
+            local size=$(stty size 2>/dev/null)
+            [[ $size == $_ff_size ]] && return 0
+            _ff_size=$size
+            zle && zle -I
+            clear
+            ff --same
+        }
+        _ff_redraw_off() {
+            unfunction TRAPWINCH 2>/dev/null
+            add-zsh-hook -d preexec _ff_redraw_off
+        }
+        autoload -Uz add-zsh-hook
+        add-zsh-hook preexec _ff_redraw_off
+    fi
+fi
 
 # Emacs keys, plus Ctrl+arrows by word and Home / End / Delete as kitty sends them.
 bindkey -e
