@@ -1,6 +1,6 @@
-// Right side of the bar, left to right: tray, updates, temperature, CPU, RAM,
+// Right side of the bar, left to right: tray, updates, temperature · CPU · RAM,
 // volume, notifications, network, battery, power. In focus mode the updates
-// pill is hidden and temperature, CPU and RAM share one pill.
+// pill is hidden.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -11,7 +11,7 @@ RowLayout {
 
     required property var window
 
-    // Temperature, CPU and RAM open btop in a normal tiled kitty. The smaller font gives
+    // The stats pill opens btop in a normal tiled kitty. The smaller font gives
     // btop its minimum of 80x24 cells even in a half-height tile.
     function openMonitor() {
         Quickshell.execDetached(["kitty", "-o", "font_size=9.5", "--title", "btop", "-e", "btop"]);
@@ -41,34 +41,11 @@ RowLayout {
         }
     }
 
+    // Temperature · CPU · RAM in one pill, e.g. 52° · 6% · 31%, in every mode.
     Stat {
-        visible: !ModeState.focus
-        icon: "thermostat"
-        value: `${Math.round(SystemStats.temp)}°`
-        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary     // same threshold as Waybar
-        onClicked: root.openMonitor()
-    }
-
-    Stat {
-        visible: !ModeState.focus
-        icon: "memory"
-        value: `${Math.round(SystemStats.cpu * 100)}%`
-        onClicked: root.openMonitor()
-    }
-
-    Stat {
-        visible: !ModeState.focus
-        icon: "memory_alt"
-        value: `${Math.round(SystemStats.ram * 100)}%`
-        onClicked: root.openMonitor()
-    }
-
-    // Focus: temperature · CPU · RAM in one pill, e.g. 52° · 6% · 31%.
-    Stat {
-        visible: ModeState.focus
         icon: "monitoring"
         value: `${Math.round(SystemStats.temp)}° · ${Math.round(SystemStats.cpu * 100)}% · ${Math.round(SystemStats.ram * 100)}%`
-        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary
+        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary     // same threshold as Waybar
         onClicked: root.openMonitor()
     }
 
