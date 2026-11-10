@@ -32,14 +32,16 @@ stop_video() {
 
 # mpv decodes on the integrated GPU, the one that also draws the wallpaper
 # (VA-API, no copy), and falls back to software decoding if that fails.
-# Hyprland exports LIBVA_DRIVER_NAME=nvidia for everything else. The video
-# pauses while it is hidden or a window is fullscreen. mode.sh holds its lock
+# Hyprland exports LIBVA_DRIVER_NAME=nvidia for everything else. Quickshell
+# (VideoWallpaper.qml) pauses the video through the socket while a window has
+# focus, and is told here that a new mpv is listening. mode.sh holds its lock
 # on descriptor 9, which a daemon must not inherit.
 start_video() {
     stop_video
-    LIBVA_DRIVER_NAME=iHD mpvpaper -f -p -a MAX \
+    LIBVA_DRIVER_NAME=iHD mpvpaper -f \
         -o "no-audio loop hwdec=vaapi panscan=1.0 input-ipc-server=${XDG_RUNTIME_DIR:-/tmp}/mpvpaper.sock" \
         ALL "$1" >/dev/null 2>&1 9>&-
+    ( sleep 1; qs ipc call wallpaper sync ) >/dev/null 2>&1 9>&- &
 }
 
 # video_frame <video> first|colors: path of a cached still that covers 1920x1080.

@@ -18,6 +18,9 @@ ShellRoot {
     CalendarPopup {}
     ModeOsd {}
 
+    // No window of its own: pauses the video wallpaper while a window has focus.
+    VideoWallpaper {}
+
     // Menus: one at a time, switched through MenuState (qs ipc call menu toggle <name>).
     Launcher {}
     Clipboard {}
