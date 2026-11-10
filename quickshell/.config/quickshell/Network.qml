@@ -1,5 +1,6 @@
 // Network state as an icon only (signal strength, wired or offline), to keep the bar
-// narrow. Click: Wi-Fi page of the control center, with the network name and the list.
+// narrow. Click: the Wi-Fi view on its own (network name and list), without the rest
+// of the control center; a second click closes it.
 import QtQuick
 import Quickshell.Networking
 
@@ -21,5 +22,5 @@ Stat {
     value: ""
     accent: wifi === null && wired === null ? Theme.error : Theme.primary
 
-    onClicked: ControlCenterState.openPage("wifi")
+    onClicked: ControlCenterState.togglePage("wifi")
 }

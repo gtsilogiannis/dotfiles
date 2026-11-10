@@ -8,6 +8,7 @@ ColumnLayout {
     id: page
 
     signal back
+    property bool showBack: true            // hidden when the view is opened on its own from the bar
 
     readonly property var device: Networking.devices.values.find(d => d.type === DeviceType.Wifi) ?? null
     readonly property var networks: (device?.networks.values ?? [])
@@ -24,6 +25,7 @@ ColumnLayout {
 
         MaterialIcon {
             icon: "arrow_back"
+            visible: page.showBack
             MouseArea { anchors.fill: parent; anchors.margins: -6; cursorShape: Qt.PointingHandCursor; onClicked: page.back() }
         }
         Label {

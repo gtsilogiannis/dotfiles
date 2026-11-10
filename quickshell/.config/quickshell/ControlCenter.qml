@@ -64,9 +64,9 @@ PanelWindow {
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
 
         focus: true
-        // Esc steps back from the Wi-Fi / Bluetooth view first, then closes.
+        // Esc steps back from the Wi-Fi / Bluetooth view first (closes a standalone one), then closes.
         Keys.onEscapePressed: {
-            if (ControlCenterState.page !== "main") ControlCenterState.page = "main";
+            if (ControlCenterState.page !== "main") ControlCenterState.back();
             else ControlCenterState.close();
         }
 
@@ -156,7 +156,8 @@ PanelWindow {
 
             WifiPage {
                 visible: ControlCenterState.page === "wifi"
-                onBack: ControlCenterState.page = "main"
+                showBack: !ControlCenterState.standalone
+                onBack: ControlCenterState.back()
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -164,7 +165,8 @@ PanelWindow {
             BluetoothPage {
                 visible: ControlCenterState.page === "bluetooth"
                 adapter: root.adapter
-                onBack: ControlCenterState.page = "main"
+                showBack: !ControlCenterState.standalone
+                onBack: ControlCenterState.back()
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }

@@ -9,6 +9,7 @@ ColumnLayout {
     required property var adapter
 
     signal back
+    property bool showBack: true            // hidden when the view is opened on its own from the bar
 
     readonly property var devices: adapter?.devices.values ?? []
     readonly property var saved: devices.filter(d => d.paired || d.bonded)
@@ -25,6 +26,7 @@ ColumnLayout {
 
         MaterialIcon {
             icon: "arrow_back"
+            visible: page.showBack
             MouseArea { anchors.fill: parent; anchors.margins: -6; cursorShape: Qt.PointingHandCursor; onClicked: page.back() }
         }
         Label {
