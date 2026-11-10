@@ -93,6 +93,8 @@ case "${1:-}" in
         else
             printf '%s\n' browsing > "$state/mode"
             if [[ "$was_opaque" == on ]]; then hyprctl reload >/dev/null; fi
+            # awww only shows the still of a video wallpaper.
+            "$scripts/set-wallpaper.sh" --resume || true
         fi
         ;;
     opaque)
