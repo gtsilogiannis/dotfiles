@@ -1,6 +1,6 @@
 // Right side of the bar, left to right: tray, updates, temperature · CPU · RAM,
-// volume, keyboard layout, notifications, network, battery, power. In focus mode the updates
-// pill is hidden.
+// volume, keyboard layout, control center (network and notifications), battery,
+// power. In focus mode the updates pill is hidden.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -53,9 +53,7 @@ RowLayout {
 
     KeyboardLayout {}
 
-    Notifications {}
-
-    Network {}
+    ControlCenterButton {}
 
     // The battery draws its own shape, so it sits on a plain glass island.
     Glass {
