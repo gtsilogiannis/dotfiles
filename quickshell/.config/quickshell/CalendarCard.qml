@@ -1,5 +1,5 @@
-// Month view, weeks starting on Monday, today highlighted.
-// Arrows or scroll change the month; clicking the title returns to today.
+// Large clock with seconds above a month view, weeks starting on Monday, today
+// highlighted. Arrows or scroll change the month; clicking the title returns to today.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -8,6 +8,9 @@ Card {
     id: root
 
     SystemClock { id: clock; precision: SystemClock.Hours }
+    // Seconds tick only while the card is on screen (the popup passes its open state).
+    property bool live: true
+    SystemClock { id: now; precision: SystemClock.Seconds; enabled: root.live }
 
     readonly property date today: clock.date
     property int monthOffset: 0                 // 0 = current month
@@ -22,6 +25,34 @@ Card {
 
     function sameDay(a, b) {
         return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    }
+
+    // 17:43 large, :08 small on the same baseline, the full date under them.
+    Row {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.topMargin: 4
+
+        Label {
+            id: hhmm
+            text: Qt.formatTime(now.date, "HH:mm")
+            font.family: Theme.monoFamily
+            font.pixelSize: 52
+            font.weight: Font.Light
+        }
+        Label {
+            text: Qt.formatTime(now.date, ":ss")
+            font.family: Theme.monoFamily
+            font.pixelSize: 20
+            color: Theme.primary
+            // Text items align by height; move the small one down to the large one's baseline.
+            y: hhmm.baselineOffset - baselineOffset
+        }
+    }
+    Label {
+        text: Qt.formatDate(now.date, "dddd d MMMM")
+        color: Theme.surfaceTextMuted
+        Layout.alignment: Qt.AlignHCenter
+        Layout.bottomMargin: 6
     }
 
     RowLayout {

@@ -1,4 +1,4 @@
-// Month calendar under the clock. Opens with a click on the clock,
+// Large clock and month calendar under the bar clock. Opens with a click on the clock,
 // closes on Esc or a click outside.
 import QtQuick
 import Quickshell
@@ -36,6 +36,7 @@ PanelWindow {
     CalendarCard {
         id: calendar
         width: parent.width
+        live: root.visible
         color: Qt.alpha(Theme.surface, 0.8)
         border.width: 1
         border.color: Qt.alpha(Theme.outlineVariant, 0.6)
