@@ -1,5 +1,5 @@
 // Right side of the bar, left to right: tray, updates, temperature · CPU · RAM,
-// volume, keyboard layout, control center (network and notifications), battery,
+// volume, keyboard layout, control center, battery,
 // power. In focus mode the updates pill is hidden.
 import QtQuick
 import QtQuick.Layouts
