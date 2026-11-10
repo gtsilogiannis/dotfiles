@@ -17,7 +17,7 @@ RowLayout {
         Quickshell.execDetached(["kitty", "-o", "font_size=9.5", "--title", "btop", "-e", "btop"]);
     }
 
-    spacing: Theme.spacing
+    spacing: Theme.gap                  // empty space between the islands
 
     Tray { window: root.window }
 
@@ -55,7 +55,11 @@ RowLayout {
 
     Network {}
 
-    Battery {}
+    // The battery draws its own shape, so it sits on a plain glass island.
+    Glass {
+        implicitWidth: battery.implicitWidth + 22
+        Battery { id: battery; anchors.centerIn: parent }
+    }
 
     Stat {
         icon: "power_settings_new"

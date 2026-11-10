@@ -1,9 +1,9 @@
-// Rounded container for one bar module. Children are laid out in a row
+// One bar module as its own glass island. Children are laid out in a row
 // and centered vertically; the whole pill reacts to hover, clicks and scroll.
 import QtQuick
 import QtQuick.Layouts
 
-Rectangle {
+Glass {
     id: pill
 
     default property alias content: row.data
@@ -14,11 +14,18 @@ Rectangle {
 
     readonly property bool hovered: area.containsMouse
 
-    implicitWidth: row.implicitWidth + 20
-    implicitHeight: Theme.pillHeight
-    radius: height / 2
-    color: Qt.alpha(Theme.surfaceContainerHigh, interactive && hovered ? 0.9 : 0.55)
-    Behavior on color { ColorAnimation { duration: 150 } }
+    implicitWidth: row.implicitWidth + 22
+
+    // Hover: a lighter layer over the glass. Its opacity animates, not the glass color,
+    // which already follows the theme fade.
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 1                    // inside the outline
+        radius: height / 2
+        color: Theme.surfaceContainerHigh
+        opacity: pill.interactive && pill.hovered ? 0.7 : 0
+        Behavior on opacity { NumberAnimation { duration: 150 } }
+    }
 
     MouseArea {
         id: area

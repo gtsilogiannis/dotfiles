@@ -54,10 +54,10 @@ Singleton {
     // Geometry follows Hyprland: gaps_out = 8, rounding = 12.
     readonly property int gap: 8
     readonly property int radius: 12
-    readonly property int barHeight: 34
+    readonly property int barHeight: 32                 // height of every bar island
 
-    readonly property int pillHeight: barHeight - 10   // 24 px: 5 px of bar visible above and below
-    readonly property int spacing: 6                    // between pills and inside them
+    readonly property int pillHeight: barHeight - 8    // 24 px: workspace chips, 4 px of glass around them
+    readonly property int spacing: 6                    // inside the islands
 
     // Text in IBM Plex Sans; numbers, times and commands in Maple Mono, whose equal-width
     // digits keep values from shifting the layout as they change.
