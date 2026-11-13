@@ -6,10 +6,14 @@
 #   set-wallpaper.sh <image|video>   apply it
 #   set-wallpaper.sh --resume        at login: play the current wallpaper
 #                                    again if it is a video
+#   set-wallpaper.sh --reoutput      after a monitor change: move the video
+#                                    to the output that should play it
 #
-# An image is shown by awww. A video is played by mpvpaper on every output,
-# above a still of its first frame: awww shows that still, hyprlock uses it
-# and the next login starts with it. The colors of a video come from a frame
+# An image is shown by awww on every output. A video is played by mpvpaper on
+# one output only, the external monitor if one is connected and the laptop
+# panel otherwise, above a still of its first frame: awww shows that still on
+# every output, hyprlock uses it and the next login starts with it. One output
+# means one decoder. The colors of a video come from a frame
 # at 10% of its length. Focus mode shows the still only.
 set -euo pipefail
 
@@ -17,6 +21,9 @@ state="$HOME/.local/state/desktop"
 cache="$HOME/.cache/current_wallpaper.png"
 pathfile="$HOME/.cache/current_wallpaper.path"
 frames="$HOME/.cache/wallpaper-frames"
+# Output that plays the video, read by Quickshell (VideoWallpaper.qml); empty
+# while none plays. Always rewritten in place, so its file watcher survives.
+outfile="${XDG_RUNTIME_DIR:-/tmp}/mpvpaper.output"
 
 is_video() {
     case "${1,,}" in
@@ -28,19 +35,29 @@ is_video() {
 stop_video() {
     pkill -x mpvpaper 2>/dev/null || true
     pkill -x mpvpaper-holder 2>/dev/null || true
+    : > "$outfile"
+}
+
+# The first connected output that is not the laptop panel (eDP-*), else the panel.
+video_output() {
+    hyprctl -j monitors 2>/dev/null | jq -er '
+        map(.name) | (map(select(startswith("eDP") | not)) + .) | first // empty' 2>/dev/null
 }
 
 # mpv decodes on the integrated GPU, the one that also draws the wallpaper
 # (VA-API, no copy), and falls back to software decoding if that fails.
 # Hyprland exports LIBVA_DRIVER_NAME=nvidia for everything else. Quickshell
-# (VideoWallpaper.qml) pauses the video through the socket while a window has
-# focus, and is told here that a new mpv is listening. mode.sh holds its lock
+# (VideoWallpaper.qml) pauses the video through the socket while the workspace
+# on its output has windows, and is told here that a new mpv is listening. mode.sh holds its lock
 # on descriptor 9, which a daemon must not inherit.
 start_video() {
+    local output
     stop_video
+    output=$(video_output) || output=ALL
+    printf '%s\n' "$output" > "$outfile"
     LIBVA_DRIVER_NAME=iHD mpvpaper -f \
         -o "no-audio loop hwdec=vaapi panscan=1.0 input-ipc-server=${XDG_RUNTIME_DIR:-/tmp}/mpvpaper.sock" \
-        ALL "$1" >/dev/null 2>&1 9>&-
+        "$output" "$1" >/dev/null 2>&1 9>&-
     ( sleep 1; qs ipc call wallpaper sync ) >/dev/null 2>&1 9>&- &
 }
 
@@ -89,11 +106,14 @@ show_image() {
     fi
 }
 
-if [[ "${1:-}" == --resume ]]; then
+if [[ "${1:-}" == --resume || "${1:-}" == --reoutput ]]; then
+    [[ -e "$outfile" ]] || : > "$outfile"
     wall=$(cat "$pathfile" 2>/dev/null || true)
     mode=$(cat "$state/mode" 2>/dev/null || echo browsing)
-    if [[ -n "$wall" && -f "$wall" && "$mode" != focus ]] && is_video "$wall" \
-        && ! pgrep -x mpvpaper >/dev/null; then
+    [[ -n "$wall" && -f "$wall" && "$mode" != focus ]] && is_video "$wall" || exit 0
+    if [[ "$1" == --resume ]]; then
+        pgrep -x mpvpaper >/dev/null || start_video "$wall"
+    elif [[ "$(video_output || echo ALL)" != "$(cat "$outfile")" ]] || ! pgrep -x mpvpaper >/dev/null; then
         start_video "$wall"
     fi
     exit 0

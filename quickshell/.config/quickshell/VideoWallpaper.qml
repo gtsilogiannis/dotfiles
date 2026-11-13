@@ -1,8 +1,10 @@
-// Pauses the video wallpaper while a window has focus and plays it on an
-// empty workspace: behind glass windows every video frame makes Hyprland blur
-// and redraw the whole screen. Talks to mpv through the IPC socket that
-// scripts/set-wallpaper.sh gives mpvpaper; the script asks for a sync
-// (qs ipc call wallpaper sync) each time it starts a video.
+// Pauses the video wallpaper whenever its output shows a workspace with
+// windows, and plays it only on an empty one: behind windows every video frame
+// makes Hyprland redraw and blur that whole screen. mpvpaper plays on a single
+// output (scripts/set-wallpaper.sh picks the external monitor if there is one)
+// and writes its name to $XDG_RUNTIME_DIR/mpvpaper.output; the other outputs
+// keep the still. Talks to mpv through the IPC socket the script gives
+// mpvpaper, and asks the script to move the video when monitors come and go.
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -11,11 +13,19 @@ import Quickshell.Hyprland
 Scope {
     id: root
 
-    property bool windowFocused: false
-    onWindowFocusedChanged: root.sync()
+    readonly property string runtimeDir: Quickshell.env("XDG_RUNTIME_DIR")
+    readonly property string script: Quickshell.env("HOME") + "/.config/quickshell/scripts/set-wallpaper.sh"
+
+    // Output that plays the video; empty while no video plays.
+    property string output: ""
+    readonly property var monitor: Hyprland.monitors.values.find(m => m.name === root.output) ?? null
+    readonly property var workspace: root.monitor?.activeWorkspace ?? null
+    readonly property bool paused: !root.workspace || root.workspace.toplevels.values.length > 0
+    onPausedChanged: root.sync()
 
     // The socket only exists while a video plays, so it is opened on demand.
     function sync() {
+        if (root.output === "") return;
         if (socket.connected) {
             socket.send();
         } else {
@@ -26,36 +36,51 @@ Scope {
 
     Socket {
         id: socket
-        path: Quickshell.env("XDG_RUNTIME_DIR") + "/mpvpaper.sock"
+        path: root.runtimeDir + "/mpvpaper.sock"
         onConnectedChanged: if (connected) send()
 
         function send() {
-            write(JSON.stringify({ command: ["set_property", "pause", root.windowFocused] }) + "\n");
+            write(JSON.stringify({ command: ["set_property", "pause", root.paused] }) + "\n");
             flush();
         }
     }
 
-    // Starting value; "{}" when no window has focus.
-    Process {
-        running: true
-        command: ["hyprctl", "activewindow", "-j"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    root.windowFocused = !!JSON.parse(this.text).address;
-                } catch (e) {
-                    root.windowFocused = false;
-                }
-                root.sync();
-            }
+    // Rewritten in place (never removed) by the script, so the watcher survives.
+    FileView {
+        id: outputFile
+        property bool read: false
+        path: root.runtimeDir + "/mpvpaper.output"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: {
+            read = true;
+            root.output = text().trim();
+            root.sync();
         }
     }
 
-    // Event data: the window address, empty when the focus moves to no window.
+    // The file appears at login (set-wallpaper.sh --resume); retry until then.
+    Timer {
+        interval: 2000
+        repeat: true
+        running: !outputFile.read
+        onTriggered: outputFile.reload()
+    }
+
+    // A monitor plugged in or out: the script moves the video to the right
+    // output. Hyprland sends several events per change, hence the delay.
+    Timer {
+        id: reoutput
+        interval: 1500
+        onTriggered: Quickshell.execDetached([root.script, "--reoutput"])
+    }
+
     Connections {
         target: Hyprland
         function onRawEvent(event) {
-            if (event.name === "activewindowv2") root.windowFocused = event.data !== "";
+            if (event.name.startsWith("monitoradded") || event.name.startsWith("monitorremoved"))
+                reoutput.restart();
         }
     }
 
