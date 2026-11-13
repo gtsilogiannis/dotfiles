@@ -21,6 +21,9 @@ ShellRoot {
     // No window of its own: plays the video wallpaper on one output, paused while that output shows windows.
     VideoWallpaper {}
 
+    // Bottom layer, only on a depth wallpaper: a clock between the wallpaper and its subject.
+    DesktopLayer {}
+
     // Menus: one at a time, switched through MenuState (qs ipc call menu toggle <name>).
     Launcher {}
     Clipboard {}
