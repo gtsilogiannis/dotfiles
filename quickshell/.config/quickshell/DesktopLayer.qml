@@ -10,10 +10,13 @@
 //
 // <name>.depth.json may hold an optional "clock" object, read live:
 //   x         center of the clock, fraction of the screen width (0.5)
-//   baseline  baseline of the time, fraction of the screen height
-//             (default: 30% of the clock size below the top of the subject,
-//             so the subject covers the lower part of the digits)
-//   size      height of the time font, fraction of the screen height (0.2)
+//   top       top of the digits, fraction of the screen height (0.09)
+//   size      font size of the time, fraction of the screen height (0.2)
+//   stretch   vertical stretch of the digits. Default: adapts to the
+//             subject, as tall as possible (up to 1.8) while the highest
+//             point of the subject covers at most 35% of the digits
+//   baseline  baseline of the time, fraction of the screen height; when
+//             set it wins over top
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -96,9 +99,16 @@ Scope {
             readonly property real oy: (height - meta.height * s) / 2
 
             readonly property real clockSize: Math.round(height * (clockPreset.size ?? 0.2))
+            readonly property real clockTop: height * (clockPreset.top ?? 0.09)
+            readonly property real subjectTop: oy + cut.y * s
+            readonly property real capHeight: digits.tightBoundingRect.height
+            readonly property real stretch: clockPreset.stretch
+                ?? Math.max(1.0, Math.min(1.8, (subjectTop - clockTop) / (0.65 * capHeight)))
+            // Height of the digits on screen, stretch included.
+            readonly property real digitHeight: capHeight * stretch
             readonly property real clockBaseline: clockPreset.baseline !== undefined
                 ? height * clockPreset.baseline
-                : oy + cut.y * s + 0.3 * clockSize
+                : clockTop + digitHeight
 
             // Lets awww finish growing the new wallpaper before covering it.
             Timer {
@@ -133,6 +143,12 @@ Scope {
                     precision: SystemClock.Minutes
                 }
 
+                TextMetrics {
+                    id: digits
+                    font: time.font
+                    text: "0123456789"
+                }
+
                 Text {
                     id: time
                     x: Math.round(win.width * (win.clockPreset.x ?? 0.5) - width / 2)
@@ -144,11 +160,13 @@ Scope {
                     font.weight: Font.Light
                     font.features: { "tnum": 1 }    // equal-width digits: the clock does not shift each minute
                     renderType: Text.CurveRendering
+                    // Stretched upward from the baseline, which stays in place.
+                    transform: Scale { origin.y: time.baselineOffset; yScale: win.stretch }
                 }
 
                 Text {
                     x: Math.round(time.x + (time.width - width) / 2)
-                    y: Math.round(time.y + time.baselineOffset - win.clockSize * 0.78 - height)
+                    y: Math.round(win.clockBaseline - win.digitHeight - win.clockSize * 0.08 - height)
                     text: Qt.formatDate(clock.date, "dddd d MMMM")
                     color: Theme.primary
                     font.family: root.clockFamily
