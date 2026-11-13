@@ -28,9 +28,18 @@ PanelWindow {
         anchors { left: parent.left; verticalCenter: parent.verticalCenter }
     }
 
+    // On a depth wallpaper the desktop draws its own clock (and media card) while
+    // this screen shows an empty workspace: the center islands step aside until
+    // a window opens on it.
     RowLayout {
+        id: center
+        readonly property bool yielded: DepthState.shownOn(bar.screen)
+
         anchors.centerIn: parent
         spacing: Theme.gap
+        opacity: yielded ? 0 : 1
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
         Media {}
         Clock {}

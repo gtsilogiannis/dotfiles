@@ -3,7 +3,8 @@
 // in front of the clock. Lives on the bottom layer: above awww, below every
 // window. Exists only while the current wallpaper is in
 // ~/Pictures/wallpapers/depth/, its cutout has been made, and the desktop is
-// in browsing mode; otherwise no window is created and nothing is loaded.
+// in browsing mode (DepthState); otherwise no window is created and nothing
+// is loaded.
 //
 // The wallpaper is drawn here too, through the same transform as the cutout
 // (cover the screen, centered, like awww), so the two line up exactly.
@@ -19,62 +20,15 @@
 //             set it wins over top
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
 
 Scope {
     id: root
 
-    readonly property string depthDir: (Quickshell.env("XDG_DATA_HOME") || Quickshell.env("HOME") + "/.local/share") + "/depth"
     readonly property string clockFamily: "Inter Display"
 
-    property string wallpaper: ""
-    readonly property bool isDepth: root.wallpaper.indexOf("/wallpapers/depth/") >= 0
-    readonly property string stem: root.wallpaper.split("/").pop().replace(/\.[^.]*$/, "")
-    property var meta: null                     // parsed .depth.json, null without a cutout
-    readonly property bool active: root.isDepth && root.meta !== null && !ModeState.focus
-
-    onWallpaperChanged: root.meta = null
-
-    // Written in place by set-wallpaper.sh on every change.
-    FileView {
-        id: pathFile
-        property bool read: false
-        path: Quickshell.env("HOME") + "/.cache/current_wallpaper.path"
-        watchChanges: true
-        printErrors: false
-        onFileChanged: reload()
-        onLoaded: {
-            read = true;
-            root.wallpaper = text().trim();
-        }
-    }
-
-    Timer {
-        interval: 2000
-        repeat: true
-        running: !pathFile.read
-        onTriggered: pathFile.reload()
-    }
-
-    FileView {
-        path: root.isDepth ? root.depthDir + "/" + root.stem + ".depth.json" : ""
-        watchChanges: true
-        printErrors: false
-        onFileChanged: reload()
-        onLoaded: {
-            try {
-                const m = JSON.parse(text());
-                root.meta = m.width > 0 && m.height > 0 && m.cutout ? m : null;
-            } catch (e) {
-                root.meta = null;
-            }
-        }
-        onLoadFailed: root.meta = null
-    }
-
     Variants {
-        model: root.active ? Quickshell.screens : []
+        model: DepthState.active ? Quickshell.screens : []
 
         PanelWindow {
             id: win
@@ -89,7 +43,7 @@ Scope {
             WlrLayershell.namespace: "quickshell-desktop"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
-            readonly property var meta: root.meta
+            readonly property var meta: DepthState.meta
             readonly property var cut: meta.cutout
             readonly property var clockPreset: meta.clock ?? ({})
 
@@ -132,7 +86,7 @@ Scope {
                     height: Math.round(win.meta.height * win.s)
                     sourceSize.width: width
                     sourceSize.height: height
-                    source: "file://" + root.wallpaper
+                    source: "file://" + DepthState.wallpaper
                     fillMode: Image.Stretch
                     autoTransform: true
                     asynchronous: true
@@ -183,7 +137,7 @@ Scope {
                     height: Math.round(win.cut.height * win.s)
                     sourceSize.width: width
                     sourceSize.height: height
-                    source: "file://" + root.depthDir + "/" + root.stem + ".depth.png"
+                    source: "file://" + DepthState.depthDir + "/" + DepthState.stem + ".depth.png"
                     fillMode: Image.Stretch
                     autoTransform: true
                     asynchronous: true
