@@ -18,6 +18,8 @@
 //             point of the subject covers at most 35% of the digits
 //   baseline  baseline of the time, fraction of the screen height; when
 //             set it wins over top
+// and an optional "media" object for the player card (DesktopMedia.qml):
+//   x, y      top left corner, fractions of the screen (0.03, bottom 0.06)
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -38,7 +40,8 @@ Scope {
             anchors { top: true; bottom: true; left: true; right: true }
             exclusionMode: ExclusionMode.Ignore     // the whole screen, like the wallpaper under it
             color: "transparent"
-            mask: Region {}                         // never takes input
+            // Input only on the media card, for its buttons; clicks elsewhere reach nothing.
+            mask: Region { item: media.shown ? media : null; radius: Theme.radius * 2 }
             WlrLayershell.layer: WlrLayer.Bottom
             WlrLayershell.namespace: "quickshell-desktop"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
@@ -46,6 +49,7 @@ Scope {
             readonly property var meta: DepthState.meta
             readonly property var cut: meta.cutout
             readonly property var clockPreset: meta.clock ?? ({})
+            readonly property var mediaPreset: meta.media ?? ({})
 
             // Cover: scale until both sides fill the screen, center, crop the rest.
             readonly property real s: Math.max(width / meta.width, height / meta.height)
@@ -141,6 +145,16 @@ Scope {
                     fillMode: Image.Stretch
                     autoTransform: true
                     asynchronous: true
+                }
+
+                // In front of the subject, like a widget on the glass.
+                DesktopMedia {
+                    id: media
+                    backdrop: back
+                    x: Math.round(win.width * (win.mediaPreset.x ?? 0.03))
+                    y: Math.round(win.mediaPreset.y !== undefined
+                        ? win.height * win.mediaPreset.y
+                        : win.height * (1 - 0.06) - height)
                 }
             }
         }
