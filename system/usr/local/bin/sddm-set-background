@@ -2,8 +2,14 @@
 # Sets the background of the SDDM login screen (sddm-astronaut-theme). Runs as
 # root, through pkexec from ~/.config/quickshell/scripts/set-login-wallpaper.sh.
 #
-#   sddm-set-background < <image>    use the PNG or JPEG read from stdin
+#   sddm-set-background [Key=Value ...] < <image>
+#                                    use the PNG or JPEG read from stdin, and
+#                                    the given theme keys (colors, font, form)
 #   sddm-set-background --reset      back to the background of the theme
+#
+# Only these keys are accepted, each with a checked value: *Color (#RRGGBB),
+# Font (letters, digits, spaces), FormPosition (left, center, right),
+# PartialBlur / HaveFormBackground (true, false), RoundCorners (0-99).
 #
 # The image comes on stdin, so root never opens a path chosen by the caller.
 # It is copied to /usr/local/share/sddm/, which the sddm user can read (it
@@ -33,7 +39,21 @@ if [[ "${1:-}" == --reset ]]; then
     rm -f "$user" "$dest"/background.*
     exit 0
 fi
-[[ $# -eq 0 ]] || die "usage: sddm-set-background < image | --reset"
+
+keys=()
+for arg in "$@"; do
+    [[ "$arg" == *=* ]] || die "usage: sddm-set-background [Key=Value ...] < image | --reset"
+    key="${arg%%=*}" value="${arg#*=}"
+    case "$key" in
+        *Color) [[ "$key" =~ ^[A-Za-z]+$ && "$value" =~ ^#[0-9A-Fa-f]{6}$ ]] ;;
+        Font) [[ "$value" =~ ^[A-Za-z0-9\ ]{1,64}$ ]] ;;
+        FormPosition) [[ "$value" =~ ^(left|center|right)$ ]] ;;
+        PartialBlur|HaveFormBackground) [[ "$value" =~ ^(true|false)$ ]] ;;
+        RoundCorners) [[ "$value" =~ ^[0-9]{1,2}$ ]] ;;
+        *) false ;;
+    esac || die "key not allowed or bad value: $arg"
+    keys+=("$key=\"$value\"")
+done
 [[ ! -t 0 ]] || die "no image on stdin"
 
 umask 022
@@ -57,6 +77,9 @@ mv -f "$tmp" "$dest/background.$ext"
 trap - EXIT
 find "$dest" -maxdepth 1 -name 'background.*' ! -name "background.$ext" -delete
 
-printf '[General]\nBackground="%s"\n' "$dest/background.$ext" > "$user.tmp"
+{
+    printf '[General]\nBackground="%s"\n' "$dest/background.$ext"
+    (( ${#keys[@]} == 0 )) || printf '%s\n' "${keys[@]}"
+} > "$user.tmp"
 chmod 644 "$user.tmp"
 mv -f "$user.tmp" "$user"
