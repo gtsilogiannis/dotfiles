@@ -12,10 +12,11 @@
 // <name>.depth.json may hold an optional "clock" object, read live:
 //   x         center of the clock, fraction of the screen width (0.5)
 //   top       top of the digits, fraction of the screen height (0.09)
-//   size      font size of the time, fraction of the screen height (0.2)
-//   stretch   vertical stretch of the digits. Default: adapts to the
-//             subject, as tall as possible (up to 1.8) while the highest
-//             point of the subject covers at most 35% of the digits
+//   size      base font size, fraction of the screen height (0.2)
+//   stretch   font size as a multiple of the base size. Default: adapts to
+//             the subject, as tall as possible (up to 1.8) while the highest
+//             point of the subject covers at most 35% of the digits, and
+//             never wider than 36% of the screen
 //   baseline  baseline of the time, fraction of the screen height; when
 //             set it wins over top
 // and an optional "media" object for the player card (DesktopMedia.qml):
@@ -27,7 +28,10 @@ import Quickshell.Wayland
 Scope {
     id: root
 
-    readonly property string clockFamily: "Inter Display"
+    // Roboto Flex (ttf-roboto-flex), bold and narrow: tall digits from the font
+    // itself, at its largest figure height, rather than stretched glyphs.
+    readonly property string clockFamily: "Roboto Flex"
+    readonly property var clockAxes: ({ "wght": 700, "wdth": 30, "opsz": 144, "YTFI": 788 })
 
     Variants {
         model: DepthState.active ? Quickshell.screens : []
@@ -56,14 +60,17 @@ Scope {
             readonly property real ox: (width - meta.width * s) / 2
             readonly property real oy: (height - meta.height * s) / 2
 
-            readonly property real clockSize: Math.round(height * (clockPreset.size ?? 0.2))
+            readonly property real baseSize: Math.round(height * (clockPreset.size ?? 0.2))
             readonly property real clockTop: height * (clockPreset.top ?? 0.09)
             readonly property real subjectTop: oy + cut.y * s
-            readonly property real capHeight: digits.tightBoundingRect.height
+            // Digit height and clock width per pixel of font size, measured at 100 px
+            // so that they do not depend on the size they decide.
+            readonly property real digitRatio: digits.tightBoundingRect.height / 100
+            readonly property real widthRatio: sample.advanceWidth / 100
             readonly property real stretch: clockPreset.stretch
-                ?? Math.max(1.0, Math.min(1.8, (subjectTop - clockTop) / (0.65 * capHeight)))
-            // Height of the digits on screen, stretch included.
-            readonly property real digitHeight: capHeight * stretch
+                ?? Math.max(1.0, Math.min(1.8, (subjectTop - clockTop) / (0.65 * baseSize * digitRatio)))
+            readonly property real clockSize: Math.round(Math.min(baseSize * stretch, width * 0.36 / widthRatio))
+            readonly property real digitHeight: clockSize * digitRatio
             readonly property real clockBaseline: clockPreset.baseline !== undefined
                 ? height * clockPreset.baseline
                 : clockTop + digitHeight
@@ -103,8 +110,19 @@ Scope {
 
                 TextMetrics {
                     id: digits
-                    font: time.font
+                    font.family: root.clockFamily
+                    font.pixelSize: 100
+                    font.variableAxes: root.clockAxes
                     text: "0123456789"
+                }
+
+                TextMetrics {
+                    id: sample
+                    font.family: root.clockFamily
+                    font.pixelSize: 100
+                    font.variableAxes: root.clockAxes
+                    font.features: { "tnum": 1 }
+                    text: "00:00"
                 }
 
                 Text {
@@ -115,22 +133,20 @@ Scope {
                     color: Theme.surfaceText
                     font.family: root.clockFamily
                     font.pixelSize: win.clockSize
-                    font.weight: Font.Light
+                    font.variableAxes: root.clockAxes
                     font.features: { "tnum": 1 }    // equal-width digits: the clock does not shift each minute
                     renderType: Text.CurveRendering
-                    // Stretched upward from the baseline, which stays in place.
-                    transform: Scale { origin.y: time.baselineOffset; yScale: win.stretch }
                 }
 
                 Text {
                     x: Math.round(time.x + (time.width - width) / 2)
-                    y: Math.round(win.clockBaseline - win.digitHeight - win.clockSize * 0.08 - height)
+                    y: Math.round(win.clockBaseline - win.digitHeight - win.baseSize * 0.08 - height)
                     text: Qt.formatDate(clock.date, "dddd d MMMM")
                     color: Theme.primary
                     font.family: root.clockFamily
-                    font.pixelSize: Math.round(win.clockSize * 0.11)
-                    font.weight: Font.Normal
-                    font.letterSpacing: Math.round(win.clockSize * 0.11) * 0.08
+                    font.pixelSize: Math.round(win.baseSize * 0.11)
+                    font.weight: Font.Medium
+                    font.letterSpacing: Math.round(win.baseSize * 0.11) * 0.08
                 }
 
                 Image {
