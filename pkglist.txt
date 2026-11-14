@@ -40,7 +40,6 @@ hyprsunset
 imagemagick
 intel-media-driver
 intel-ucode
-inter-font
 iverilog
 jq
 kitty

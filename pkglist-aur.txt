@@ -6,5 +6,6 @@ nautilus-open-any-terminal
 onlyoffice-bin
 pomotroid-bin
 sddm-astronaut-theme
+ttf-roboto-flex
 vesktop-bin
 yay
