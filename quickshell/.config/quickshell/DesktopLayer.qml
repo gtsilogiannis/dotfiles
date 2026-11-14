@@ -1,6 +1,7 @@
 // Depth wallpaper: draws the wallpaper, a large clock and then the subject cut
 // out of the same picture (scripts/make-depth.sh), so that the subject stands
-// in front of the clock. Lives on the bottom layer: above awww, below every
+// in front of the clock; the media, month and to-do cards go in front of it
+// all. Lives on the bottom layer: above awww, below every
 // window. Exists only while the current wallpaper is in
 // ~/Pictures/wallpapers/depth/, its cutout has been made, and the desktop is
 // in browsing mode (DepthState); otherwise no window is created and nothing
@@ -19,8 +20,12 @@
 //             never wider than 36% of the screen
 //   baseline  baseline of the time, fraction of the screen height; when
 //             set it wins over top
-// and an optional "media" object for the player card (DesktopMedia.qml):
+// an optional "media" object for the player card (DesktopMedia.qml):
 //   x, y      top left corner, fractions of the screen (0.03, bottom 0.06)
+// and an optional "stack" object for the month and to-do cards, stacked in
+// the bottom right corner (DesktopCalendar.qml, DesktopTodo.qml):
+//   right     gap to the right edge, fraction of the screen width (0.03)
+//   bottom    gap to the bottom edge, fraction of the screen height (0.06)
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -45,16 +50,24 @@ Scope {
             anchors { top: true; bottom: true; left: true; right: true }
             exclusionMode: ExclusionMode.Ignore     // the whole screen, like the wallpaper under it
             color: "transparent"
-            // Input only on the media card, for its buttons; clicks elsewhere reach nothing.
-            mask: Region { item: media.shown ? media : null; radius: Theme.radius * 2 }
+            // Input only on the media and to-do cards, for their buttons; clicks
+            // elsewhere reach nothing.
+            mask: Region {
+                Region { item: media.shown ? media : null; radius: Theme.radius * 2 }
+                Region { item: todo; radius: Theme.radius * 2 }
+            }
             WlrLayershell.layer: WlrLayer.Bottom
             WlrLayershell.namespace: "quickshell-desktop"
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+            // The keyboard only while a task is typed: exclusive, so the text goes
+            // here without a second click; given back on Enter or Escape, or when
+            // a window covers this desktop.
+            WlrLayershell.keyboardFocus: todo.editing ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             readonly property var meta: DepthState.meta
             readonly property var cut: meta.cutout
             readonly property var clockPreset: meta.clock ?? ({})
             readonly property var mediaPreset: meta.media ?? ({})
+            readonly property var stackPreset: meta.stack ?? ({})
 
             // Cover: scale until both sides fill the screen, center, crop the rest.
             readonly property real s: Math.max(width / meta.width, height / meta.height)
@@ -172,6 +185,22 @@ Scope {
                     y: Math.round(win.mediaPreset.y !== undefined
                         ? win.height * win.mediaPreset.y
                         : win.height * (1 - 0.06) - height)
+                }
+
+                // Month above the to-do list, both against the right edge; the list
+                // grows upwards, and the month moves with it.
+                DesktopTodo {
+                    id: todo
+                    backdrop: back
+                    allowEditing: DepthState.shownOn(win.screen)
+                    x: Math.round(win.width * (1 - (win.stackPreset.right ?? 0.03)) - width)
+                    y: Math.round(win.height * (1 - (win.stackPreset.bottom ?? 0.06)) - height)
+                }
+
+                DesktopCalendar {
+                    backdrop: back
+                    x: todo.x
+                    y: todo.y - Theme.gap * 1.5 - height
                 }
             }
         }
