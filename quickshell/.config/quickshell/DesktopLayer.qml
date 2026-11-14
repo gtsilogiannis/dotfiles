@@ -28,10 +28,11 @@ import Quickshell.Wayland
 Scope {
     id: root
 
-    // Roboto Flex (ttf-roboto-flex), bold and narrow: tall digits from the font
+    // Roboto Flex (ttf-roboto-flex), black and narrow: tall digits from the font
     // itself, at its largest figure height, rather than stretched glyphs.
     readonly property string clockFamily: "Roboto Flex"
-    readonly property var clockAxes: ({ "wght": 700, "wdth": 30, "opsz": 144, "YTFI": 788 })
+    readonly property var clockAxes: ({ "wght": 900, "wdth": 30, "opsz": 144, "YTFI": 788 })
+    readonly property var dateAxes: ({ "wght": 700, "opsz": 28 })
 
     Variants {
         model: DepthState.active ? Quickshell.screens : []
@@ -144,9 +145,9 @@ Scope {
                     text: Qt.formatDate(clock.date, "dddd d MMMM")
                     color: Theme.primary
                     font.family: root.clockFamily
-                    font.pixelSize: Math.round(win.baseSize * 0.11)
-                    font.weight: Font.Medium
-                    font.letterSpacing: Math.round(win.baseSize * 0.11) * 0.08
+                    font.pixelSize: Math.round(win.baseSize * 0.12)
+                    font.variableAxes: root.dateAxes
+                    font.letterSpacing: Math.round(win.baseSize * 0.12) * 0.01
                 }
 
                 Image {
