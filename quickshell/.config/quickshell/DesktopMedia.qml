@@ -1,10 +1,6 @@
 // Media card on the depth desktop: album art, title, artist and controls on
-// frosted glass. The glass is the wallpaper itself, blurred under the card
-// only: the area behind it is taken from the wallpaper image (backdrop) a
-// margin wider than the card, so the blur has real pixels at its edges, and
-// cut to the rounded card. The wallpaper never moves, so the blur is drawn once
-// and costs nothing afterwards. Hidden while no player is open (browsers are
-// ignored, as in the bar).
+// frosted glass (DesktopGlass.qml). Hidden while no player is open (browsers
+// are ignored, as in the bar).
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
@@ -21,7 +17,6 @@ Item {
 
     readonly property int pad: 14
     readonly property int artSize: 84
-    readonly property int blurMargin: 48        // wallpaper taken around the card for the blur
 
     implicitWidth: 380
     implicitHeight: artSize + 2 * pad
@@ -29,56 +24,7 @@ Item {
     visible: opacity > 0
     Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
-    // Frosted wallpaper, rounded like the card.
-    Item {
-        id: frost
-        anchors.fill: parent
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            maskEnabled: true
-            maskSource: shape
-            maskThresholdMin: 0.5
-            maskSpreadAtMin: 1.0
-        }
-
-        MultiEffect {
-            x: -root.blurMargin
-            y: -root.blurMargin
-            width: root.width + 2 * root.blurMargin
-            height: root.height + 2 * root.blurMargin
-            autoPaddingEnabled: false
-            blurEnabled: true
-            blur: 1.0
-            blurMax: 64
-            saturation: 0.2
-            source: ShaderEffectSource {
-                sourceItem: root.backdrop
-                // The card's rectangle in the wallpaper's coordinates, plus the margin.
-                sourceRect: Qt.rect(root.x - root.backdrop.x - root.blurMargin,
-                                    root.y - root.backdrop.y - root.blurMargin,
-                                    root.width + 2 * root.blurMargin,
-                                    root.height + 2 * root.blurMargin)
-                hideSource: false
-            }
-        }
-    }
-
-    Item {
-        id: shape
-        anchors.fill: parent
-        visible: false
-        layer.enabled: true
-        Rectangle { anchors.fill: parent; radius: Theme.radius * 2 }
-    }
-
-    // Tint and edge, as on the bar islands.
-    Rectangle {
-        anchors.fill: parent
-        radius: Theme.radius * 2
-        color: Qt.alpha(Theme.surface, 0.35)
-        border.width: 1
-        border.color: Qt.alpha(Theme.outlineVariant, 0.6)
-    }
+    DesktopGlass { backdrop: root.backdrop }
 
     RowLayout {
         anchors.fill: parent
