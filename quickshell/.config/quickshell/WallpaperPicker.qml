@@ -1,7 +1,9 @@
 // Wallpaper picker (SUPER + W): thumbnails of ~/Pictures/wallpapers in one tab
 // per folder (static, depth and video in browsing mode, focus in focus mode),
 // the current one marked. Enter / click applies it with
-// scripts/set-wallpaper.sh (awww or mpvpaper + matugen colors).
+// scripts/set-wallpaper.sh (awww or mpvpaper + matugen colors). Shift + Enter
+// in the Static and Depth tabs makes it the login screen background with
+// scripts/set-login-wallpaper.sh (password prompt), marked with a login badge.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -26,6 +28,8 @@ MenuWindow {
     property string tab: "static"
     property var files: []          // { type, path, thumb } from scripts/list-wallpapers.sh
     readonly property var shown: files.filter(f => f.type === root.tab)
+    readonly property bool loginTab: tab === "static" || tab === "depth"
+    property string login: ""              // path of the login screen background
 
     function count(type) {
         return files.filter(f => f.type === type).length;
@@ -47,6 +51,35 @@ MenuWindow {
     function apply(path) {
         Quickshell.execDetached([Quickshell.shellDir + "/scripts/set-wallpaper.sh", path]);
         MenuState.close();
+    }
+
+    // Closes first, so the password prompt of pkexec gets the keyboard.
+    function applyLogin(path) {
+        if (!loginTab)
+            return;
+        Quickshell.execDetached([Quickshell.shellDir + "/scripts/set-login-wallpaper.sh", path]);
+        MenuState.close();
+    }
+
+    function activate(event) {
+        if (shown.length === 0)
+            return;
+        const path = shown[grid.currentIndex].path;
+        if (event.modifiers & Qt.ShiftModifier)
+            applyLogin(path);
+        else
+            apply(path);
+    }
+
+    // Written by set-login-wallpaper.sh after the background was set.
+    FileView {
+        id: loginFile
+        path: Quickshell.env("HOME") + "/.local/state/desktop/login-wallpaper"
+        watchChanges: true
+        printErrors: false
+        onFileChanged: reload()
+        onLoaded: root.login = text().trim()
+        onLoadFailed: root.login = ""
     }
 
     onOpened: {
@@ -164,8 +197,8 @@ MenuWindow {
             keyNavigationWraps: true
 
             Keys.onEscapePressed: MenuState.close()
-            Keys.onReturnPressed: if (root.shown.length > 0) root.apply(root.shown[currentIndex].path)
-            Keys.onEnterPressed: if (root.shown.length > 0) root.apply(root.shown[currentIndex].path)
+            Keys.onReturnPressed: event => root.activate(event)
+            Keys.onEnterPressed: event => root.activate(event)
             Keys.onTabPressed: root.cycleTab(1)
             Keys.onBacktabPressed: root.cycleTab(-1)
 
@@ -175,6 +208,7 @@ MenuWindow {
                 required property int index
                 readonly property bool selected: GridView.isCurrentItem
                 readonly property bool isCurrent: modelData.path === root.current
+                readonly property bool isLogin: modelData.path === root.login
 
                 width: root.cellWidth
                 height: root.cellHeight
@@ -206,6 +240,19 @@ MenuWindow {
                             anchors.centerIn: parent
                             icon: cell.modelData.type === "video" ? "play_arrow" : "layers"
                             color: Theme.surfaceText
+                            font.pixelSize: 16
+                        }
+                    }
+
+                    Rectangle {      // login screen background badge
+                        visible: cell.isLogin
+                        anchors { left: parent.left; top: parent.top; margins: 8 }
+                        width: 24; height: 24; radius: 12
+                        color: Qt.alpha(Theme.surface, 0.75)
+                        MaterialIcon {
+                            anchors.centerIn: parent
+                            icon: "login"
+                            color: Theme.primary
                             font.pixelSize: 16
                         }
                     }
@@ -247,7 +294,9 @@ MenuWindow {
             color: Theme.surfaceTextMuted
             font.pixelSize: Theme.fontSize - 2
             text: (root.tabs.length > 1 ? "Tab: next folder   ·   " : "")
-                + "← ↑ → ↓: select   ·   Enter: apply (colors follow)   ·   Esc: close"
+                + "← ↑ → ↓: select   ·   Enter: apply (colors follow)   ·   "
+                + (root.loginTab ? "Shift + Enter: login screen   ·   " : "")
+                + "Esc: close"
         }
     }
 }
