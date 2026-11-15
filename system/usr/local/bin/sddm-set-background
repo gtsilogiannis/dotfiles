@@ -9,7 +9,8 @@
 #
 # Only these keys are accepted, each with a checked value: *Color (#RRGGBB),
 # Font (letters, digits, spaces), FormPosition (left, center, right),
-# PartialBlur / HaveFormBackground (true, false), RoundCorners (0-99).
+# PartialBlur / HaveFormBackground (true, false), RoundCorners (0-99),
+# Blur (0.0-1.0, strength of the MultiEffect blur), BlurMax (1-64, its radius).
 #
 # The image comes on stdin, so root never opens a path chosen by the caller.
 # It is copied to /usr/local/share/sddm/, which the sddm user can read (it
@@ -50,6 +51,8 @@ for arg in "$@"; do
         FormPosition) [[ "$value" =~ ^(left|center|right)$ ]] ;;
         PartialBlur|HaveFormBackground) [[ "$value" =~ ^(true|false)$ ]] ;;
         RoundCorners) [[ "$value" =~ ^[0-9]{1,2}$ ]] ;;
+        Blur) [[ "$value" =~ ^(0(\.[0-9]{1,2})?|1(\.0{1,2})?)$ ]] ;;
+        BlurMax) [[ "$value" =~ ^[0-9]{1,2}$ ]] && (( 10#$value >= 1 && 10#$value <= 64 )) ;;
         *) false ;;
     esac || die "key not allowed or bad value: $arg"
     keys+=("$key=\"$value\"")

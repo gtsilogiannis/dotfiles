@@ -88,7 +88,7 @@ map=(
     HoverVirtualKeyboardButtonTextColor tertiary
 )
 
-args=(Font="IBM Plex Sans" FormPosition="$(form_side)" PartialBlur=true HaveFormBackground=false RoundCorners=24)
+args=(Font="IBM Plex Sans" FormPosition="$(form_side)" PartialBlur=true HaveFormBackground=false Blur=1.0 BlurMax=32 RoundCorners=24)
 for ((i = 0; i < ${#map[@]}; i += 2)); do
     args+=("${map[i]}=$(color "${map[i + 1]}")")
 done
