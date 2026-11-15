@@ -1,4 +1,5 @@
 bibata-cursor-theme-bin
+claude-desktop
 fzf-tab-git
 maplemono-nf
 mpvpaper
