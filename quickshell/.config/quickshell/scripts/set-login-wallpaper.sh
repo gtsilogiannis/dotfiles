@@ -56,39 +56,17 @@ color() {
 
 # theme key  matugen color
 map=(
-    HeaderTextColor primary
-    DateTextColor primary
-    TimeTextColor on_surface
-    FormBackgroundColor surface
-    BackgroundColor surface
-    DimBackgroundColor surface
-    LoginFieldBackgroundColor surface_container_high
-    PasswordFieldBackgroundColor surface_container_high
-    LoginFieldTextColor on_surface
-    PasswordFieldTextColor on_surface
-    UserIconColor primary
-    PasswordIconColor primary
-    PlaceholderTextColor on_surface_variant
-    WarningColor error
-    LoginButtonTextColor on_primary
-    LoginButtonBackgroundColor primary
-    SystemButtonsIconsColor on_surface
-    SessionButtonTextColor on_surface
-    VirtualKeyboardButtonTextColor on_surface
-    DropdownTextColor on_surface
-    DropdownSelectedBackgroundColor secondary_container
-    DropdownBackgroundColor surface_container
-    HighlightTextColor on_primary
-    HighlightBackgroundColor primary
-    HighlightBorderColor primary
-    HoverUserIconColor tertiary
-    HoverPasswordIconColor tertiary
-    HoverSystemButtonsIconsColor tertiary
-    HoverSessionButtonTextColor tertiary
-    HoverVirtualKeyboardButtonTextColor tertiary
+    PrimaryColor primary
+    OnPrimaryColor on_primary
+    SurfaceColor surface
+    OnSurfaceColor on_surface
+    OnSurfaceVariantColor on_surface_variant
+    FieldColor surface_container_high
+    ErrorColor error
+    AccentColor tertiary
 )
 
-args=(Font="IBM Plex Sans" FormPosition="$(form_side)" PartialBlur=true HaveFormBackground=false Blur=1.0 BlurMax=32 RoundCorners=24)
+args=(Font="IBM Plex Sans" FormPosition="$(form_side)" Blur=1.0 BlurMax=32 RoundCorners=24)
 for ((i = 0; i < ${#map[@]}; i += 2)); do
     args+=("${map[i]}=$(color "${map[i + 1]}")")
 done

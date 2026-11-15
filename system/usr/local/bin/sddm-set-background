@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets the background of the SDDM login screen (sddm-astronaut-theme). Runs as
+# Sets the background of the SDDM login screen (theme gtsilos). Runs as
 # root, through pkexec from ~/.config/quickshell/scripts/set-login-wallpaper.sh.
 #
 #   sddm-set-background [Key=Value ...] < <image>
@@ -8,19 +8,20 @@
 #   sddm-set-background --reset      back to the background of the theme
 #
 # Only these keys are accepted, each with a checked value: *Color (#RRGGBB),
-# Font (letters, digits, spaces), FormPosition (left, center, right),
-# PartialBlur / HaveFormBackground (true, false), RoundCorners (0-99),
-# Blur (0.0-1.0, strength of the MultiEffect blur), BlurMax (1-64, its radius).
+# Font (letters, digits, spaces), FormPosition (left, right), RoundCorners
+# (0-99), Blur (0.0-1.0, strength of the MultiEffect blur), BlurMax (1-64,
+# its radius).
 #
 # The image comes on stdin, so root never opens a path chosen by the caller.
 # It is copied to /usr/local/share/sddm/, which the sddm user can read (it
 # cannot read home directories), and the theme is pointed at it with
 # <ConfigFile>.user next to the theme config: SDDM reads that file after the
-# config and its keys win. No file of the package changes, so an update of the
-# theme keeps the override. Installed with sudo install, not Stow.
+# config and its keys win. The theme files (system/usr/share/sddm/themes/gtsilos
+# in the repo) stay untouched, so reinstalling them keeps the override.
+# Installed with sudo install, not Stow.
 set -euo pipefail
 
-theme=/usr/share/sddm/themes/sddm-astronaut-theme
+theme=/usr/share/sddm/themes/gtsilos
 dest=/usr/local/share/sddm
 max=$((50 * 1024 * 1024))
 
@@ -48,8 +49,7 @@ for arg in "$@"; do
     case "$key" in
         *Color) [[ "$key" =~ ^[A-Za-z]+$ && "$value" =~ ^#[0-9A-Fa-f]{6}$ ]] ;;
         Font) [[ "$value" =~ ^[A-Za-z0-9\ ]{1,64}$ ]] ;;
-        FormPosition) [[ "$value" =~ ^(left|center|right)$ ]] ;;
-        PartialBlur|HaveFormBackground) [[ "$value" =~ ^(true|false)$ ]] ;;
+        FormPosition) [[ "$value" =~ ^(left|right)$ ]] ;;
         RoundCorners) [[ "$value" =~ ^[0-9]{1,2}$ ]] ;;
         Blur) [[ "$value" =~ ^(0(\.[0-9]{1,2})?|1(\.0{1,2})?)$ ]] ;;
         BlurMax) [[ "$value" =~ ^[0-9]{1,2}$ ]] && (( 10#$value >= 1 && 10#$value <= 64 )) ;;
