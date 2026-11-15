@@ -12,13 +12,16 @@
 # An image is shown by awww on every output. A video is played by mpvpaper on
 # one output only, the external monitor if one is connected and the laptop
 # panel otherwise, above a still of its first frame: awww shows that still on
-# every output, hyprlock uses it and the next login starts with it. One output
+# every output, the lock screen uses it and the next login starts with it. One output
 # means one decoder. The colors of a video come from a frame
 # at 10% of its length. Focus mode shows the still only.
 set -euo pipefail
 
 state="$HOME/.local/state/desktop"
 cache="$HOME/.cache/current_wallpaper.png"
+# "left" or "right": where the lock screen (lock/shell.qml) puts its form.
+sidefile="$HOME/.cache/current_wallpaper.side"
+scripts=$(dirname -- "$0")
 pathfile="$HOME/.cache/current_wallpaper.path"
 frames="$HOME/.cache/wallpaper-frames"
 # Output that plays the video, read by Quickshell (VideoWallpaper.qml); empty
@@ -150,7 +153,7 @@ if [[ $is_cache -eq 0 && "$wall" != "$current" ]]; then
     stop_video
     show_image "$still"
 
-    # Read at login (autostart) and by hyprlock; the .path file marks the current one in the picker.
+    # Read at login (autostart) and by the lock screen; the .path file marks the current one in the picker.
     mkdir -p "$HOME/.cache"
     cp -f "$still" "$cache"
     printf '%s\n' "$wall" > "$pathfile"
@@ -170,6 +173,12 @@ elif [[ -n "$video" ]]; then
     pgrep -x mpvpaper >/dev/null || start_video "$video"
 else
     stop_video
+fi
+
+# The form side of the lock screen, again for every new still.
+if [[ ! -s "$sidefile" || "$cache" -nt "$sidefile" ]]; then
+    side=$("$scripts/form-side.sh" "$still" 2>/dev/null) || side=right
+    printf '%s\n' "$side" > "$sidefile"
 fi
 
 # Each mode remembers its own wallpaper.

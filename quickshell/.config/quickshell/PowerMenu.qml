@@ -25,7 +25,7 @@ MenuWindow {
     function run(index) {
         const label = root.actions[index].label;
         MenuState.close();          // close first, so the lock screen is not covered
-        if (label === "Lock") Quickshell.execDetached(["hyprlock"]);
+        if (label === "Lock") Quickshell.execDetached([Quickshell.env("HOME") + "/.config/quickshell/scripts/lock.sh"]);
         else if (label === "Suspend") Quickshell.execDetached(["systemctl", "suspend"]);
         // The Lua config uses the hl.dsp syntax (same as SUPER + M); legacy configs use "exit".
         else if (label === "Logout") Hyprland.dispatch(Hyprland.usingLua ? "hl.dsp.exit()" : "exit");

@@ -162,7 +162,9 @@ hl.config({
         force_default_wallpaper = 2,
         disable_hyprland_logo   = true,
         vrr = 0,
-
+        -- A lock screen started again after its crash (scripts/lock.sh from a TTY)
+        -- may take over the lock, instead of the red "lockscreen died" screen.
+        allow_session_lock_restore = true,
     },
 
     cursor = {
@@ -270,7 +272,7 @@ hl.bind(mainMod .. " + BackSpace",        hl.dsp.exec_cmd("~/.config/quickshell/
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("grim - | wl-copy --type image/png"))
 -- Win + Shift + S: User Defined
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy --type image/png"))
-hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind("SUPER + L", hl.dsp.exec_cmd("~/.config/quickshell/scripts/lock.sh"))
 hl.bind("ALT + F4", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
 -- Without Fn the laptop F4 key sends XF86AudioMicMute, so ALT + F4 arrives as ALT + XF86AudioMicMute
 hl.bind("ALT + XF86AudioMicMute", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
