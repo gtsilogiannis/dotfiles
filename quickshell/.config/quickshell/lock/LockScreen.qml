@@ -33,7 +33,7 @@ Item {
 
     signal edited(string text)
     signal submitted()
-    signal keyPressed()
+    signal keyChanged()                         // any key down or up: Caps Lock may have changed
 
     readonly property real side: width * 0.4                    // width of the blurred side
     readonly property real fade: Math.min(320, side / 2)        // its soft inner edge
@@ -233,7 +233,9 @@ Item {
             onTextEdited: root.edited(text)
             onAccepted: root.submitted()
             Keys.onEscapePressed: root.edited("")
-            Keys.onPressed: event => root.keyPressed()     // not accepted: the key still types
+            // Not accepted: the key still types.
+            Keys.onPressed: event => root.keyChanged()
+            Keys.onReleased: event => root.keyChanged()
         }
 
         Item { width: 1; height: 14 }

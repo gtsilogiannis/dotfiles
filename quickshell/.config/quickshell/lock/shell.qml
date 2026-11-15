@@ -106,10 +106,7 @@ ShellRoot {
                     root.message = "";
                 }
                 onSubmitted: root.submit()
-                onKeyPressed: {
-                    if (!caps.running)
-                        caps.running = true;
-                }
+                onKeyChanged: caps.check()
             }
         }
     }
@@ -144,17 +141,31 @@ ShellRoot {
         }
     }
 
-    // Caps Lock of the main keyboard, read again after every key.
+    // Caps Lock, read again after every key press and release (the release
+    // of Caps Lock itself comes after the change). On if any keyboard has it:
+    // the main one is the last one used, not always the one typed on.
     Process {
         id: caps
+        property bool again: false
+        function check() {
+            if (caps.running)
+                caps.again = true;          // once more after this run, with the newer state
+            else
+                caps.running = true;
+        }
+        onExited: (exitCode, exitStatus) => {
+            if (caps.again) {
+                caps.again = false;
+                Qt.callLater(() => caps.running = true);
+            }
+        }
         running: true
         command: ["hyprctl", "devices", "-j"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
                     const keyboards = JSON.parse(text).keyboards;
-                    const main = keyboards.find(k => k.main) ?? keyboards[0];
-                    root.capsLock = main !== undefined && main.capsLock === true;
+                    root.capsLock = keyboards.some(k => k.capsLock === true);
                 } catch (e) {
                     root.capsLock = false;
                 }
