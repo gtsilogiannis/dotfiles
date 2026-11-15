@@ -254,7 +254,7 @@ local mainMod = "SUPER"
 
 -- Core Apps & Management
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + Q",      hl.dsp.window.close())
+hl.bind(mainMod .. " + Q",      hl.dsp.exec_cmd("~/.config/hypr/scripts/close-window.sh"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(terminal .. " -e yazi"))
 hl.bind(mainMod .. " + N",      hl.dsp.exec_cmd("qs ipc call controlcenter toggle"))
