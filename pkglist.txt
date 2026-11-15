@@ -34,7 +34,6 @@ grub
 gvfs
 hypridle
 hyprland
-hyprlock
 hyprpolkitagent
 hyprsunset
 imagemagick
