@@ -1,6 +1,5 @@
-// Top bar: workspaces on the left, media and clock in the center,
-// system modules on the right. The bar itself is transparent: every module
-// is its own glass island, with empty space between them.
+// Top bar: workspaces, media and clock, system modules. The bar is transparent;
+// every module is its own glass island.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -28,9 +27,7 @@ PanelWindow {
         anchors { left: parent.left; verticalCenter: parent.verticalCenter }
     }
 
-    // On a depth wallpaper the desktop draws its own clock (and media card) while
-    // this screen shows an empty workspace: the center islands step aside until
-    // a window opens on it.
+    // Over an empty depth desktop, which draws its own clock and media card
     RowLayout {
         id: center
         readonly property bool yielded: DepthState.shownOn(bar.screen)

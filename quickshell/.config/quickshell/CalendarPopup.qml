@@ -1,5 +1,4 @@
-// Large clock and month calendar under the bar clock. Opens with a click on the clock,
-// closes on Esc or a click outside.
+// Calendar popup under the bar clock; Esc or a click outside closes it.
 import QtQuick
 import Quickshell
 import Quickshell.Wayland

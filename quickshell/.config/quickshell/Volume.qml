@@ -24,7 +24,6 @@ Stat {
         if (mouse.button === Qt.RightButton) {
             if (sink?.audio) sink.audio.muted = !sink.audio.muted;
         } else {
-            // Same pavucontrol popup the Waybar module opened.
             Quickshell.execDetached([Quickshell.shellDir + "/scripts/volume-menu.sh"]);
         }
     }

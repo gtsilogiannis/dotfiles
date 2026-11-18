@@ -1,7 +1,5 @@
-// Glass background of one bar island (a module pill or the workspace strip).
-// Translucent in browsing, where Hyprland blurs what lies behind it; almost opaque
-// in focus, where the blur is off. The gaps between islands stay fully transparent,
-// and ignore_alpha in the layer rule keeps them unblurred.
+// Glass of one bar island: translucent and blurred by Hyprland in browsing,
+// almost opaque in focus.
 import QtQuick
 
 Rectangle {

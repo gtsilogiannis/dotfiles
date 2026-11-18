@@ -1,7 +1,5 @@
-// Platform profile of lenovo-wmi-gamezone, the same modes Fn + Q cycles.
-// A click steps through quiet -> balanced -> performance; the other modes
-// (max-power, custom) are shown when set elsewhere and step back to balanced.
-// Write access comes from the udev rule in system/etc/udev/rules.d/90-lenovo-power.rules.
+// Platform profile (lenovo-wmi-gamezone): a click cycles quiet, balanced and
+// performance; max-power and custom step back to balanced. Writable via the udev rule.
 pragma Singleton
 
 import QtQuick
@@ -33,8 +31,7 @@ Singleton {
     readonly property string label: names[profile] ?? "Power"
     readonly property string icon: icons[profile] ?? "speed"
 
-    // Fn + Q changes the file behind our back and sysfs sends no inotify event,
-    // so the control center calls this while it is open.
+    // Fn + Q raises no inotify event, so the control center polls while open
     function refresh() {
         file.reload();
     }

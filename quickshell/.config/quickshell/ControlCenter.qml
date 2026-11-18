@@ -1,6 +1,5 @@
-// Control center on the right edge, below the bar: toggles, volume and
-// brightness, media, notification history, and Wi-Fi / Bluetooth views.
-// Opens from the bar bell or SUPER + N; closes on Esc or a click outside.
+// Control center: toggles, sliders, media, notifications, Wi-Fi and Bluetooth.
+// SUPER + N or the bar button; Esc or a click outside closes it.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -80,7 +79,7 @@ PanelWindow {
                 columnSpacing: 8
                 Layout.fillWidth: true
 
-                // Same as Bluetooth: off -> a tap turns it on; on -> a tap opens the network list.
+                // Off: a tap turns it on. On: a tap opens the network list.
                 QuickToggle {
                     icon: "wifi"
                     label: "Wi-Fi"
@@ -91,7 +90,7 @@ PanelWindow {
                     }
                 }
                 // Off: a tap turns it on. On: a tap opens the device view,
-                // which has the button to turn it off (like iOS / Windows).
+                // which has the off button.
                 QuickToggle {
                     icon: "bluetooth"
                     label: "Bluetooth"
@@ -137,7 +136,7 @@ PanelWindow {
                     active: Conservation.active
                     onClicked: Conservation.toggle()
                 }
-                // Quiet -> Balanced -> Performance, like Fn + Q; lit when not Balanced.
+                // Cycles like Fn + Q; lit when not Balanced
                 QuickToggle {
                     icon: PowerProfile.icon
                     label: PowerProfile.label

@@ -1,6 +1,5 @@
-// Battery conservation mode: ideapad_acpi holds the charge near 80%.
-// The udev rule in system/etc/udev/rules.d/90-lenovo-power.rules makes the
-// attribute writable for the wheel group; without it the tile stays disabled.
+// Battery conservation mode (ideapad_acpi holds the charge near 80%).
+// Disabled unless the udev rule makes it writable.
 pragma Singleton
 
 import QtQuick

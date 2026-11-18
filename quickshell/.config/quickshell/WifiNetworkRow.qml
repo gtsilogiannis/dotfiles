@@ -1,5 +1,4 @@
-// One Wi-Fi network. Click: disconnect if connected, connect if saved or open,
-// ask for the password if new and secured (WPA/WPA2/WPA3 personal).
+// One Wi-Fi network. Click: disconnect, connect, or ask for a password (WPA personal).
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Networking

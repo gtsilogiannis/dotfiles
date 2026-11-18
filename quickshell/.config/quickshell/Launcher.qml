@@ -1,5 +1,4 @@
-// App launcher (SUPER + Space). Apps are always listed alphabetically; typing
-// filters them. Two prefixes change what the field does:
+// App launcher (SUPER + Space), alphabetical; typing filters. Prefixes:
 //   >command   Enter runs it in kitty, Shift + Enter runs it in the background
 //   =1+2*3     live result, Enter copies it to the clipboard
 import QtQuick
@@ -37,8 +36,7 @@ MenuWindow {
         return words.split(/\s+/).every(w => haystack.includes(w));
     }
 
-    // Exec= field codes (%f, %U, ...) are placeholders for files and URLs; with
-    // nothing to open they are dropped. Terminal=true apps (btop, nvim) run in kitty.
+    // Field codes (%f, %U) are dropped; Terminal=true apps run in kitty
     function launch(entry) {
         const command = entry.command.filter(arg => !/^%[fFuUdDnNickvm]$/.test(arg));
         Quickshell.execDetached({
@@ -78,7 +76,6 @@ MenuWindow {
         anchors { fill: parent; margins: 14 }
         spacing: 10
 
-        // Search field
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: 48
@@ -125,7 +122,6 @@ MenuWindow {
             }
         }
 
-        // Apps
         ListView {
             id: list
             visible: root.mode === "apps"
@@ -245,7 +241,6 @@ MenuWindow {
             Item { Layout.fillHeight: true }
         }
 
-        // Key hints
         Label {
             Layout.fillWidth: true
             horizontalAlignment: Text.AlignHCenter

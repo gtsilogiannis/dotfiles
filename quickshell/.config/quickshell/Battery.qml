@@ -1,12 +1,9 @@
-// Battery in the iOS 27 style: no outline, a track with the charge level filled
-// in from the left, and the percentage (plus a glyph) inside the shape. Colors
-// come from matugen, like the rest of the bar:
+// Battery as a filled track with the percentage and a glyph inside:
 //   on battery          primary fill
 //   plugged, held back  primary fill, plug glyph (conservation mode keeps ~80%)
 //   charging            primary fill, bolt glyph
 //   low (<= 20%)        error fill, on battery only
-// The text is drawn twice and clipped: on_primary where it lies over the fill,
-// the normal text color over the track, so it stays readable at any level.
+// The text is drawn twice and clipped, so it stays readable over fill and track.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -103,8 +100,7 @@ Item {
             }
         }
 
-        // Charge level: a full-size rounded shape cut at the level, so the left end
-        // keeps the body's corners and the right end is straight, as on iOS.
+        // A full-size rounded shape cut at the level: round left end, straight right end
         Item {
             id: fill
             width: body.width * root.level
@@ -149,8 +145,7 @@ Item {
         text: root.hint
     }
 
-    // ideapad_laptop exposes the conservation switch on the VPC2004 platform device;
-    // resolve the path once instead of hard-coding the PCI path.
+    // The conservation switch lives on the VPC2004 device; resolve its path once
     Process {
         id: consPath
         property string found: ""

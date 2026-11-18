@@ -1,5 +1,5 @@
-// Large clock with seconds above a month view, weeks starting on Monday, today
-// highlighted. Arrows or scroll change the month; clicking the title returns to today.
+// Clock with seconds over a month view. Arrows or scroll change the month;
+// a click on the title goes back to today.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell

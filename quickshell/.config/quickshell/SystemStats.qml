@@ -40,7 +40,7 @@ Singleton {
     FileView { id: memFile; path: "/proc/meminfo"; onLoaded: root.parseMem(text()) }
     FileView { id: tempFile; path: root.tempPath; onLoaded: root.temp = parseInt(text()) / 1000 }
 
-    // The hwmonN number changes between boots (ARCH P34), so resolve it once through the device path.
+    // hwmonN changes between boots: resolve it once through the device path
     Process {
         running: true
         command: ["sh", "-c", "echo /sys/devices/platform/coretemp.0/hwmon/hwmon*/temp1_input"]
@@ -71,7 +71,7 @@ Singleton {
     }
 
     Timer {
-        interval: 600000                // 10 minutes, same as the Waybar module
+        interval: 600000                // 10 minutes
         running: true
         repeat: true
         triggeredOnStart: true

@@ -1,5 +1,4 @@
-// Wi-Fi view of the control center: nearby networks (scanned while the view is
-// open), connected first, then saved, then by signal; a button to turn Wi-Fi off.
+// Wi-Fi view: networks scanned while open, connected and saved first, then by signal.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Networking

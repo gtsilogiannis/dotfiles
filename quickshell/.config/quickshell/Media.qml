@@ -1,6 +1,5 @@
-// Now playing: play/pause button and "title · artist", or only a muted icon
-// when no player is open. Browsers are ignored,
-// as in the Waybar module. Left click toggles, right click skips, scroll seeks tracks.
+// Now playing, browsers ignored. Left click: play/pause, right click: next,
+// scroll: previous or next track.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Mpris

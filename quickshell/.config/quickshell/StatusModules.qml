@@ -1,6 +1,5 @@
-// Right side of the bar, left to right: tray, updates, temperature · CPU · RAM,
-// volume, keyboard layout, control center, battery,
-// power. In focus mode the updates pill is hidden.
+// Right side of the bar: tray, updates (browsing only), stats, volume, layout,
+// control center, battery, power.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -45,7 +44,7 @@ RowLayout {
     Stat {
         icon: "monitoring"
         value: `${Math.round(SystemStats.temp)}° · ${Math.round(SystemStats.cpu * 100)}% · ${Math.round(SystemStats.ram * 100)}%`
-        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary     // same threshold as Waybar
+        accent: SystemStats.temp >= 80 ? Theme.error : Theme.primary
         onClicked: root.openMonitor()
     }
 

@@ -12,7 +12,7 @@ Rectangle {
     readonly property int state_: device.state      // not "state": that name belongs to Item
     readonly property bool paired: device.paired || device.bonded
 
-    // BlueZ icon names (freedesktop) -> Material Symbols.
+    // BlueZ (freedesktop) icon names to Material Symbols
     function iconFor(name) {
         if (/headset|headphone|audio/.test(name)) return "headphones";
         if (/mouse/.test(name)) return "mouse";

@@ -1,5 +1,4 @@
-// Keyboard layout (us, gr) shown as En / Gr. Click: next layout, the same switch
-// as ALT + SHIFT. Hyprland reports every change with an activelayout event.
+// Keyboard layout as En / Gr; a click switches like ALT + SHIFT.
 import QtQuick
 import Quickshell.Io
 import Quickshell.Hyprland
@@ -38,7 +37,7 @@ Pill {
         command: ["hyprctl", "switchxkblayout", "all", "next"]
     }
 
-    // Event data: KEYBOARD,LAYOUT, e.g. evision-ak820,Greek.
+    // Event data: KEYBOARD,LAYOUT, e.g. at-translated-set-2-keyboard,Greek
     Connections {
         target: Hyprland
         function onRawEvent(event) {

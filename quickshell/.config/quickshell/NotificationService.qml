@@ -1,6 +1,5 @@
-// Notification daemon (replaces SwayNC). Every notification is kept in the
-// history until dismissed; new ones also appear as popups unless Do Not Disturb
-// is on (critical ones always appear).
+// Notification daemon. Everything stays in the history until dismissed; popups
+// are hidden by Do Not Disturb, except critical ones.
 pragma Singleton
 
 import QtQuick
@@ -13,7 +12,7 @@ Singleton {
 
     property bool dnd: false
     property var popups: []                 // newest first, at most 5 on screen
-    property var times: ({})                // notification id -> arrival time (ms)
+    property var times: ({})                // arrival time (ms) by notification id
 
     readonly property var history: server.trackedNotifications.values
 

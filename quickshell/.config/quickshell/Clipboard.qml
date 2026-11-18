@@ -1,6 +1,5 @@
-// Clipboard history from cliphist (ALT + ,). Newest first; typing filters the
-// text entries. Enter / click copies the entry back, Delete removes it.
-// Images show a thumbnail, decoded on demand into $XDG_RUNTIME_DIR.
+// Clipboard history from cliphist (ALT + ,). Enter or click copies, Delete removes.
+// Image thumbnails are decoded on demand into $XDG_RUNTIME_DIR.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -22,7 +21,7 @@ MenuWindow {
         return q === "" ? entries : entries.filter(e => !e.image && e.preview.toLowerCase().includes(q));
     }
 
-    // "[[ binary data 52 KiB png 800x600 ]]" -> image entry
+    // "[[ binary data 52 KiB png 800x600 ]]" is an image entry
     function parse(text) {
         return text.split("\n").filter(l => l !== "").map(line => {
             const tab = line.indexOf("\t");

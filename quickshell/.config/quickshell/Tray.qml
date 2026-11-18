@@ -9,10 +9,8 @@ Pill {
 
     required property var window        // the bar, needed to place the menus
 
-    // Network and Bluetooth applets keep running, but the Network pill and the
-    // control center already cover them; the media pill and the workspace icons cover Spotify.
-    // Claude Desktop: its item ignores activation and its menu does not open, and the
-    // workspace icon already shows the window.
+    // Hidden: covered by the control center, the media pill or the workspace icons.
+    // Claude Desktop's item also ignores activation and its menu never opens.
     readonly property var items: SystemTray.items.values.filter(item => !/nm-applet|blueman|bluetooth|spotify|^claude_status_icon/i.test(item.id))
 
     interactive: false

@@ -1,6 +1,5 @@
-// Control center button: a custom glyph of two sliders, drawn with shapes so it
-// follows the theme colors. Left click: control center (Wi-Fi, Bluetooth and the
-// notifications are inside it). Right click: Do Not Disturb, as the bell did.
+// Control center button, a two-slider glyph drawn with shapes to follow the theme.
+// Left click: control center. Right click: Do Not Disturb.
 import QtQuick
 
 Pill {

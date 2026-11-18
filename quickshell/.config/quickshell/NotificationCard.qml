@@ -22,8 +22,7 @@ Rectangle {
     border.width: 1
     border.color: critical ? Theme.error : Qt.alpha(Theme.outlineVariant, 0.6)
 
-    // Popups disappear after the sender's timeout (6 s if it gives none) but stay
-    // in the history. Critical ones stay until closed. Hovering pauses the timer.
+    // Sender's timeout or 6 s; critical ones stay. Hover pauses the timer.
     Timer {
         running: card.popup && !card.critical && !hover.containsMouse
         interval: card.notification.expireTimeout > 0 ? card.notification.expireTimeout * 1000 : 6000

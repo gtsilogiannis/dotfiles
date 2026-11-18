@@ -9,24 +9,20 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    // Last scheme that parsed correctly; a half-written file keeps the previous one.
-    // (Named "scheme", not "palette": Item already has a palette property in Qt 6.)
+    // Last scheme that parsed; not "palette", which Item already has in Qt 6
     property var scheme: ({})
-    // False until the first colors.json is read, so the shell does not fade in
-    // from the fallback colors at startup; later changes animate (mode switches).
+    // No fade from the fallback colors at startup, only on later changes
     property bool ready: false
     readonly property int colorFade: 500
 
-    // Returns the matugen color for key, or the fallback until colors.json exists.
-    // Reading root.scheme inside the function makes every color binding update with it.
+    // Reading root.scheme here makes every color binding follow it
     function pick(key, fallback) {
         const value = root.scheme[key];
         return (typeof value === "string" && value.length > 0) ? value : fallback;
     }
 
-    // Material 3 roles. The on_* roles are named *Text here, because names that
-    // start with "on" + capital letter are the QML signal-handler pattern.
-    // Not readonly: a Behavior below fades each one to its new value.
+    // Material 3 roles; on_* become *Text, since onX names are signal handlers.
+    // Not readonly, so a Behavior can fade them.
     property color surface:                       pick("surface", "#11131a")
     property color surfaceContainer:              pick("surface_container", "#1d2027")
     property color surfaceContainerHigh:          pick("surface_container_high", "#272a31")
@@ -59,12 +55,11 @@ Singleton {
     readonly property int pillHeight: barHeight - 8    // 24 px: workspace chips, 4 px of glass around them
     readonly property int spacing: 6                    // inside the islands
 
-    // Text in IBM Plex Sans; numbers, times and commands in Maple Mono, whose equal-width
-    // digits keep values from shifting the layout as they change.
+    // Numbers in Maple Mono: equal-width digits keep values from shifting
     readonly property string fontFamily: "IBM Plex Sans"
     readonly property string monoFamily: "Maple Mono NF"
     readonly property int fontSize: 12
-    // Variable icon font from ttf-material-symbols-variable; icons are typed by name (ligatures).
+    // Material Symbols (variable), icons by name through ligatures
     readonly property string iconFamily: "Material Symbols Rounded"
     readonly property int iconSize: 17
 

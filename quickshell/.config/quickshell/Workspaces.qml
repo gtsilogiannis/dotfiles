@@ -1,6 +1,5 @@
-// Workspaces 1..5 (more if a higher one exists) on one glass island. Each chip shows
-// the icons of its windows; an empty workspace shows its number. The focused chip is
-// tinted, the others are bare until hovered.
+// Workspaces 1-5 (or up to the highest in use): window icons, or the number
+// when empty. The focused chip is tinted.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland

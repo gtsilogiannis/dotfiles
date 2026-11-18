@@ -1,4 +1,4 @@
-// Screen brightness through brightnessctl (the same tool as the brightness keys).
+// Screen brightness through brightnessctl, like the brightness keys
 pragma Singleton
 
 import QtQuick

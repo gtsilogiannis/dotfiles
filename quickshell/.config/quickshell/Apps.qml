@@ -6,9 +6,8 @@ import QtQuick
 import Quickshell
 
 Singleton {
-    // DesktopEntries scans the .desktop files in the background on first use, so the
-    // first lookups return null. Reading the model here makes every binding that calls
-    // entry() (directly or through name() / icon()) run again once the scan has finished.
+    // DesktopEntries scans in the background on first use and returns null until
+    // then; reading the model here re-runs every binding once the scan is done.
     function entry(appId) {
         const loaded = DesktopEntries.applications.values.length;
         return appId && loaded > 0 ? DesktopEntries.heuristicLookup(appId) : null;
@@ -19,8 +18,7 @@ Singleton {
         return e?.name || appId || "";
     }
 
-    // Theme icon of the app: the entry's Icon=, then the app id as given and in lowercase.
-    // Returns "" when none exists, so callers can draw a glyph instead of the missing texture.
+    // Icon=, then the app id as is and in lowercase; "" lets callers draw a glyph
     function icon(appId) {
         const e = entry(appId);
         for (const name of [e?.icon, appId, appId?.toLowerCase()]) {

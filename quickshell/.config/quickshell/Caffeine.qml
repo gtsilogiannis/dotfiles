@@ -1,6 +1,5 @@
-// Keeps the session awake: every bar holds a Wayland idle inhibitor while this
-// is on, and hypridle skips its dim / lock / screen-off steps.
-// Starts off with every session.
+// Keeps the session awake: while on, every bar holds an idle inhibitor, so
+// hypridle never dims, locks or blanks. Off at every login.
 pragma Singleton
 
 import QtQuick

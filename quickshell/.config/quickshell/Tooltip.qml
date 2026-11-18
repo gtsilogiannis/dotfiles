@@ -1,5 +1,4 @@
-// Hover hint under a bar item. It is a popup surface of its own, because the
-// bar window is only as tall as the bar and would clip anything drawn below it.
+// Hover hint under a bar item, in its own popup: the bar window would clip it.
 import QtQuick
 import Quickshell
 

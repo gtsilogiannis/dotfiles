@@ -1,10 +1,5 @@
-// Pauses the video wallpaper whenever its output shows a workspace with
-// windows, and plays it only on an empty one: behind windows every video frame
-// makes Hyprland redraw and blur that whole screen. mpvpaper plays on a single
-// output (scripts/set-wallpaper.sh picks the external monitor if there is one)
-// and writes its name to $XDG_RUNTIME_DIR/mpvpaper.output; the other outputs
-// keep the still. Talks to mpv through the IPC socket the script gives
-// mpvpaper, and asks the script to move the video when monitors come and go.
+// Plays the video wallpaper only while its output shows an empty workspace:
+// behind windows every frame makes Hyprland redraw and blur the whole screen.
 import QtQuick
 import Quickshell
 import Quickshell.Io

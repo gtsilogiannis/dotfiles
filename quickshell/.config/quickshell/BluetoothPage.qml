@@ -1,5 +1,4 @@
-// Bluetooth view of the control center: saved devices, nearby devices
-// (scanned while the view is open) and a button to turn Bluetooth off.
+// Bluetooth view: saved devices and nearby ones, scanned while open.
 import QtQuick
 import QtQuick.Layouts
 

@@ -12,8 +12,7 @@ Singleton {
     property bool open: false
     property real closedAt: 0
     property string page: "main"            // main | wifi | bluetooth
-    // Opened from the bar on one view (the network pill): that view stands alone,
-    // with no way back to the main panel. Only the bell and SUPER + N open the panel.
+    // A view opened from the bar stands alone, with no way back to the main panel
     property bool standalone: false
 
     function close() {

@@ -1,7 +1,5 @@
-// Desktop mode (browsing / focus) and the opaque-windows switch, both owned by
-// scripts/mode.sh, which writes them to ~/.local/state/desktop/. The shell only
-// reads the files and asks the script to change them, so Hyprland and Quickshell
-// can never disagree about the mode.
+// Desktop mode and the opaque-windows switch. scripts/mode.sh owns both files,
+// so Hyprland and the shell can never disagree about the mode.
 pragma Singleton
 
 import QtQuick
@@ -62,9 +60,8 @@ Singleton {
         }
     }
 
-    // The files may not exist yet when the shell starts (first login after an
-    // update; mode.sh init creates them two seconds after the shell). Retry
-    // until both have been read once; after that the watchers take over.
+    // mode.sh init may create the files after the shell starts: retry until both
+    // have been read once, then the watchers take over.
     Timer {
         interval: 2000
         repeat: true
