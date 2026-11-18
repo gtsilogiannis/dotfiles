@@ -1,6 +1,5 @@
-// Full-screen layer for one menu (launcher, clipboard, power, wallpaper, overview): a light
-// dim over the screen and a rounded panel in the middle. A click on the dim or
-// Esc in the menu closes it. Keyboard input goes only to the menu while it is open.
+// Full-screen layer for one menu: a light dim and a panel in the middle.
+// A click on the dim or Esc closes it.
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -29,8 +28,7 @@ PanelWindow {
     visible: MenuState.open === menuName
 
     WlrLayershell.layer: WlrLayer.Overlay
-    // Blur namespace in hyprland.lua; the default dim (alpha 0.15) is below its
-    // ignore_alpha, so only the panel is blurred.
+    // The default dim is below ignore_alpha, so Hyprland blurs only the panel
     WlrLayershell.namespace: "quickshell-menu"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 

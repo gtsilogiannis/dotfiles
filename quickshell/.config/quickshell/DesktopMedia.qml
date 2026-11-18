@@ -1,6 +1,4 @@
-// Media card on the depth desktop: album art, title, artist and controls on
-// frosted glass (DesktopGlass.qml). Hidden while no player is open (browsers
-// are ignored, as in the bar).
+// Media card on the depth desktop; hidden without a player (browsers ignored).
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts

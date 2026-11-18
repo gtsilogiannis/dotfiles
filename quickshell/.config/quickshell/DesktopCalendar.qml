@@ -1,7 +1,5 @@
-// Month card on the depth desktop: the current month on frosted glass, weeks
-// starting on Monday, today filled with the accent. Only as many rows as the
-// month needs; days of the other months are left out. Decoration only: no
-// input, it follows the date on its own.
+// Month card on the depth desktop, frosted glass, today in the accent.
+// Only the rows the month needs; no input.
 import QtQuick
 import Quickshell
 
@@ -27,7 +25,7 @@ Item {
 
     DesktopGlass { backdrop: root.backdrop }
 
-    // "November" on the left, the year in the accent on the right.
+    // Month name, and the year in the accent
     Item {
         id: header
         x: root.pad + 4

@@ -1,16 +1,8 @@
-// Depth wallpaper: draws the wallpaper, a large clock and then the subject cut
-// out of the same picture (scripts/make-depth.sh), so that the subject stands
-// in front of the clock; the media, month and to-do cards go in front of it
-// all. Lives on the bottom layer: above awww, below every
-// window. Exists only while the current wallpaper is in
-// ~/Pictures/wallpapers/depth/, its cutout has been made, and the desktop is
-// in browsing mode (DepthState); otherwise no window is created and nothing
-// is loaded.
+// Depth desktop on the bottom layer: wallpaper, clock, the subject cut out of the
+// same picture, then the cards. Wallpaper and cutout share one transform to line up.
+// Loaded only while DepthState.active.
 //
-// The wallpaper is drawn here too, through the same transform as the cutout
-// (cover the screen, centered, like awww), so the two line up exactly.
-//
-// <name>.depth.json may hold an optional "clock" object, read live:
+// Optional keys of <name>.depth.json, read live. "clock":
 //   x         center of the clock, fraction of the screen width (0.5)
 //   top       top of the digits, fraction of the screen height (0.09)
 //   size      base font size, fraction of the screen height (0.2)
@@ -20,10 +12,9 @@
 //             never wider than 36% of the screen
 //   baseline  baseline of the time, fraction of the screen height; when
 //             set it wins over top
-// an optional "media" object for the player card (DesktopMedia.qml):
+// "media", the player card (DesktopMedia.qml):
 //   x, y      top left corner, fractions of the screen (0.03, bottom 0.06)
-// and an optional "stack" object for the month and to-do cards, stacked in
-// the bottom right corner (DesktopCalendar.qml, DesktopTodo.qml):
+// "stack", the month and to-do cards in the bottom right corner:
 //   right     gap to the right edge, fraction of the screen width (0.03)
 //   bottom    gap to the bottom edge, fraction of the screen height (0.06)
 import QtQuick
@@ -33,8 +24,7 @@ import Quickshell.Wayland
 Scope {
     id: root
 
-    // Roboto Flex (ttf-roboto-flex), black and narrow: tall digits from the font
-    // itself, at its largest figure height, rather than stretched glyphs.
+    // Roboto Flex, black and narrow: tall digits without stretched glyphs
     readonly property string clockFamily: "Roboto Flex"
     readonly property var clockAxes: ({ "wght": 900, "wdth": 30, "opsz": 144, "YTFI": 788 })
     readonly property var dateAxes: ({ "wght": 700, "opsz": 28 })
@@ -50,17 +40,14 @@ Scope {
             anchors { top: true; bottom: true; left: true; right: true }
             exclusionMode: ExclusionMode.Ignore     // the whole screen, like the wallpaper under it
             color: "transparent"
-            // Input only on the media and to-do cards, for their buttons; clicks
-            // elsewhere reach nothing.
+            // Input only on the media and to-do cards
             mask: Region {
                 Region { item: media.shown ? media : null; radius: Theme.radius * 2 }
                 Region { item: todo; radius: Theme.radius * 2 }
             }
             WlrLayershell.layer: WlrLayer.Bottom
             WlrLayershell.namespace: "quickshell-desktop"
-            // The keyboard only while a task is typed: exclusive, so the text goes
-            // here without a second click; given back on Enter or Escape, or when
-            // a window covers this desktop.
+            // Exclusive keyboard only while a task is typed, so no second click is needed
             WlrLayershell.keyboardFocus: todo.editing ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
             readonly property var meta: DepthState.meta
@@ -77,8 +64,7 @@ Scope {
             readonly property real baseSize: Math.round(height * (clockPreset.size ?? 0.2))
             readonly property real clockTop: height * (clockPreset.top ?? 0.09)
             readonly property real subjectTop: oy + cut.y * s
-            // Digit height and clock width per pixel of font size, measured at 100 px
-            // so that they do not depend on the size they decide.
+            // Measured at 100 px, so they do not depend on the size they decide
             readonly property real digitRatio: digits.tightBoundingRect.height / 100
             readonly property real widthRatio: sample.advanceWidth / 100
             readonly property real stretch: clockPreset.stretch
@@ -187,8 +173,7 @@ Scope {
                         : win.height * (1 - 0.06) - height)
                 }
 
-                // Month above the to-do list, both against the right edge; the list
-                // grows upwards, and the month moves with it.
+                // The to-do list grows upwards and pushes the month with it
                 DesktopTodo {
                     id: todo
                     backdrop: back

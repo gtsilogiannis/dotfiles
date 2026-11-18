@@ -1,8 +1,5 @@
-// Whether the desktop shows a depth wallpaper: the current wallpaper is in
-// ~/Pictures/wallpapers/depth/, its cutout has been made (scripts/make-depth.sh)
-// and the desktop is in browsing mode. Shared by the desktop layer, which draws
-// the clock behind the subject, and the bars, which then leave out their own
-// clock and media islands on the screens that show the empty desktop.
+// Depth wallpaper state: a wallpaper from ~/Pictures/wallpapers/depth/ with a
+// cutout (scripts/make-depth.sh), in browsing mode. Read by the desktop layer and the bars.
 pragma Singleton
 
 import QtQuick
@@ -23,12 +20,10 @@ Singleton {
 
     onWallpaperChanged: root.meta = null
 
-    // True while the depth desktop is visible on this screen: active, and the
-    // workspace it shows has no windows (a window hides the clock anyway).
+    // Active and the workspace on this screen has no windows
     function shownOn(screen) {
         if (!root.active || !screen) return false;
-        // Looked up in the model rather than with monitorFor(), so the binding
-        // re-evaluates when Hyprland reports a new monitor.
+        // From the model, not monitorFor(), so new monitors re-evaluate it
         const ws = Hyprland.monitors.values.find(m => m.name === screen.name)?.activeWorkspace ?? null;
         return ws !== null && ws.toplevels.values.length === 0;
     }

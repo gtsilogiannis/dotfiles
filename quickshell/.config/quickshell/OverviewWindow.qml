@@ -1,6 +1,5 @@
-// One window inside an overview tile: placed and sized from its Hyprland geometry,
-// with a frozen preview (captured when the overview opens and again when the window
-// moves or resizes). Hover shows the app icon and the title.
+// One window in an overview tile, placed from its Hyprland geometry, with a preview
+// captured on open and after a move or resize.
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -67,7 +66,7 @@ Item {
             }
         }
 
-        // App icon in the centre, only on hover (and while the preview is not ready yet).
+        // App icon on hover, and while the preview is not ready
         Rectangle {
             anchors.centerIn: parent
             visible: mouse.containsMouse || !preview.hasContent

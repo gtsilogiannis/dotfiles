@@ -1,14 +1,9 @@
-// To-do card on the depth desktop, on frosted glass (DesktopGlass.qml). The
-// list is a plain Markdown checklist in $XDG_STATE_HOME/desktop/todo.md
-// (default ~/.local/state/desktop/todo.md), so it can be edited anywhere:
+// To-do card on the depth desktop. The list is a Markdown checklist in
+// $XDG_STATE_HOME/desktop/todo.md, read live and editable anywhere:
 //   - [ ] open task
 //   - [x] done task
-// Other lines are kept as they are and not shown. The file is read live.
-//
-// On the card: click a box to tick it, + to add a task (Enter adds, Escape
-// cancels), the sweep icon to drop the ticked tasks. While a task is typed,
-// the desktop layer takes the keyboard (editing); it gives it back on Enter,
-// Escape, or as soon as a window covers the desktop (allowEditing).
+// Other lines are kept but not shown. Click a box to tick it, + to add a task,
+// the sweep icon to drop the ticked ones.
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -89,7 +84,6 @@ Item {
         width: root.width - 2 * root.pad
         spacing: 6
 
-        // "To-do · 3 left", sweep and + on the right.
         Item {
             width: parent.width
             height: 24
@@ -194,7 +188,6 @@ Item {
             color: Theme.surfaceTextMuted
         }
 
-        // New task, typed in place.
         Rectangle {
             visible: root.editing
             width: column.width

@@ -1,6 +1,4 @@
-// Calculator for the launcher's "=" mode. A small recursive-descent parser:
-// nothing is passed to eval(), so only the operators, functions and constants
-// below are accepted.
+// Calculator for the launcher's "=" mode: a recursive-descent parser, no eval().
 //
 //   expr    := term (("+" | "-") term)*
 //   term    := unary (("*" | "/" | "%") unary)*

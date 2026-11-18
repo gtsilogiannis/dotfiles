@@ -98,7 +98,7 @@ Glass {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    // The Lua config uses the hl.dsp syntax; legacy configs use "workspace N".
+                    // Lua config syntax, with the legacy dispatcher as fallback
                     onClicked: Hyprland.dispatch(Hyprland.usingLua
                         ? `hl.dsp.focus({ workspace = "${chip.wsId}" })`
                         : `workspace ${chip.wsId}`)

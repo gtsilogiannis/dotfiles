@@ -18,10 +18,10 @@ ShellRoot {
     CalendarPopup {}
     ModeOsd {}
 
-    // No window of its own: plays the video wallpaper on one output, paused while that output shows windows.
+    // Video wallpaper control, no window of its own
     VideoWallpaper {}
 
-    // Bottom layer, only on a depth wallpaper: a clock between the wallpaper and its subject.
+    // Depth desktop, bottom layer
     DesktopLayer {}
 
     // Menus: one at a time, switched through MenuState (qs ipc call menu toggle <name>).

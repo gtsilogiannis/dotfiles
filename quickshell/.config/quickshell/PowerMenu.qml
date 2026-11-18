@@ -1,5 +1,4 @@
-// Power menu (ALT + F4 and the power button on the bar). Every action runs
-// immediately. Keys: ← → and Enter, or the underlined letter (L S O R H).
+// Power menu (ALT + F4, bar button). Arrows and Enter, or the underlined letter.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -27,7 +26,7 @@ MenuWindow {
         MenuState.close();          // close first, so the lock screen is not covered
         if (label === "Lock") Quickshell.execDetached([Quickshell.env("HOME") + "/.config/quickshell/scripts/lock.sh"]);
         else if (label === "Suspend") Quickshell.execDetached(["systemctl", "suspend"]);
-        // The Lua config uses the hl.dsp syntax (same as SUPER + M); legacy configs use "exit".
+        // Lua config syntax, with the legacy dispatcher as fallback
         else if (label === "Logout") Hyprland.dispatch(Hyprland.usingLua ? "hl.dsp.exit()" : "exit");
         else if (label === "Reboot") Quickshell.execDetached(["systemctl", "reboot"]);
         else if (label === "Shutdown") Quickshell.execDetached(["systemctl", "poweroff"]);

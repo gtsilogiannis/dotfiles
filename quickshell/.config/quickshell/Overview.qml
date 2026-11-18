@@ -1,7 +1,5 @@
-// Workspace overview (SUPER + Tab): the workspaces that have windows (and the focused
-// one) in rows of up to 5, straight on the blurred screen, plus a narrow slot for the
-// first empty workspace to drag windows to. Each tile shows the wallpaper and a frozen
-// preview of every window at its real place; below it, the number and the apps.
+// Workspace overview (SUPER + Tab): used workspaces in rows of up to 5, with live
+// window previews, plus a slot for the first empty one.
 //   click window      focus it (switches workspace) and close the overview
 //   middle-click      close the window
 //   drag window       move it to the tile it is dropped on, without following it
@@ -25,7 +23,6 @@ MenuWindow {
     animated: true
     framed: false
 
-    // The panel covers the screen; the content is centred in it.
     panelWidth: root.screen?.width ?? 1920
     panelHeight: root.screen?.height ?? 1080
 
@@ -38,7 +35,7 @@ MenuWindow {
         if (focused >= 1 && focused <= 10 && !ids.includes(focused)) ids.push(focused);
         return ids.sort((a, b) => a - b);
     }
-    // First free workspace, shown last as a drop target for moving windows (0 when all 10 are used).
+    // First free workspace as a drop target, 0 when all 10 are used
     readonly property int freeId: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].find(id => !usedIds.includes(id)) ?? 0
     readonly property var shownIds: freeId > 0 ? [...usedIds, freeId] : usedIds
 
@@ -57,8 +54,7 @@ MenuWindow {
     readonly property var monitor: Hyprland.focusedMonitor
     readonly property real monitorWidth: monitor ? monitor.width / monitor.scale : 1920
     readonly property real monitorHeight: monitor ? monitor.height / monitor.scale : 1080
-    // As large as the screen allows: at most 30% of its width, the first (widest) row
-    // within 90% of the width, all rows within 85% of the height.
+    // At most 30% of the width; the widest row within 90% of the width, all rows within 85% of the height
     readonly property real tileWidth: {
         const screenW = root.screen?.width ?? 1920;
         const screenH = root.screen?.height ?? 1080;
@@ -95,7 +91,7 @@ MenuWindow {
     // Hyprland selectors take the address with its 0x prefix; Quickshell reports it without.
     function selector(t) { return "address:0x" + t.address; }
 
-    // The Lua config uses the hl.dsp syntax; legacy configs use the old dispatcher names.
+    // Lua config syntax, with the legacy dispatcher as fallback
     function focusWindow(t) {
         if (!t || t.address === "") return;
         Hyprland.dispatch(Hyprland.usingLua
@@ -249,7 +245,7 @@ MenuWindow {
             }
         }
 
-        // Workspaces, one Row per line so a shorter last line stays centred.
+        // One Row per line, so a shorter last line stays centered
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: root.rowSpacing
@@ -280,7 +276,7 @@ MenuWindow {
                             readonly property bool isFree: wsId === root.freeId
                             readonly property var ws: Hyprland.workspaces.values.find(w => w.id === wsId) ?? null
                             readonly property var mon: ws?.monitor ?? root.monitor
-                            // Layout pixels -> tile pixels.
+                            // Layout pixels to tile pixels
                             readonly property real scaleFactor: mon ? width / (mon.width / mon.scale) : width / root.monitorWidth
                             readonly property bool active: Hyprland.focusedWorkspace?.id === wsId
                             readonly property int windowCount: windowRepeater.count

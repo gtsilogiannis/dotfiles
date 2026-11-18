@@ -1,5 +1,4 @@
-// Blue-light filter: hyprsunset runs while the filter is on and resets the
-// colors when it is stopped.
+// Blue-light filter: hyprsunset runs while on and resets the colors on exit.
 pragma Singleton
 
 import QtQuick

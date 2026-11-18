@@ -1,9 +1,5 @@
-// Wallpaper picker (SUPER + W): thumbnails of ~/Pictures/wallpapers in one tab
-// per folder (static, depth and video in browsing mode, focus in focus mode),
-// the current one marked. Enter / click applies it with
-// scripts/set-wallpaper.sh (awww or mpvpaper + matugen colors). Shift + Enter
-// in the Static and Depth tabs makes it the login screen background with
-// scripts/set-login-wallpaper.sh (password prompt), marked with a login badge.
+// Wallpaper picker (SUPER + W), one tab per folder of ~/Pictures/wallpapers.
+// Enter applies it; Shift + Enter makes a still the login background.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell

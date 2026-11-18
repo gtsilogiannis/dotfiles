@@ -1,11 +1,6 @@
-// Frosted glass behind a card of the depth desktop. The glass is the wallpaper
-// itself, blurred under the card only: the area behind it is taken from the
-// wallpaper image (backdrop) a margin wider than the card, so the blur has real
-// pixels at its edges, and cut to the rounded card. The wallpaper never moves,
-// so the blur is drawn once and costs nothing afterwards.
-//
-// Fills its parent, the card, which must be a sibling of the backdrop (same
-// coordinates), as every card of DesktopLayer.qml is.
+// Frosted glass for a depth desktop card: the wallpaper under the card, taken a
+// margin wider so the blur has real pixels at its edges. The wallpaper never moves,
+// so the blur is drawn once. The card must be a sibling of the backdrop.
 import QtQuick
 import QtQuick.Effects
 
@@ -19,7 +14,6 @@ Item {
 
     anchors.fill: parent
 
-    // Frosted wallpaper, rounded like the card.
     Item {
         anchors.fill: parent
         layer.enabled: true
@@ -42,7 +36,7 @@ Item {
             saturation: 0.2
             source: ShaderEffectSource {
                 sourceItem: root.backdrop
-                // The card's rectangle in the wallpaper's coordinates, plus the margin.
+                // The card in wallpaper coordinates, plus the margin
                 sourceRect: Qt.rect(root.card.x - root.backdrop.x - root.blurMargin,
                                     root.card.y - root.backdrop.y - root.blurMargin,
                                     root.width + 2 * root.blurMargin,
@@ -60,7 +54,7 @@ Item {
         Rectangle { anchors.fill: parent; radius: root.radius }
     }
 
-    // Tint and edge, as on the bar islands.
+    // Tint and edge, as on the bar islands
     Rectangle {
         anchors.fill: parent
         radius: root.radius

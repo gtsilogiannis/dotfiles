@@ -1,5 +1,4 @@
-// Short on-screen hint in the middle of the focused monitor when the desktop
-// mode or the opaque-windows switch changes. Clicks pass through it.
+// Brief hint on the focused monitor when the mode or opaque switch changes.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
