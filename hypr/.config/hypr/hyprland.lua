@@ -11,7 +11,7 @@ hl.monitor({
 })
 
 hl.monitor({
-    output   = "desc:AOC 24G2WG3",
+    output   = "desc:AOC 24G2WG3", -- description prefix: model only, no serial
     mode     = "1920x1080@144",
     position = "auto-right",
     scale    = "1",
