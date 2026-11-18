@@ -23,7 +23,6 @@ hl.monitor({
     mode     = "preferred",
     position = "auto-right",
     scale    = "1",
-    
 })
 
 --------------------------
@@ -47,7 +46,7 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("hypridle &")
     hl.exec_cmd("wl-paste --type text --watch cliphist store &")
     hl.exec_cmd("wl-paste --type image --watch cliphist store &")
-    -- Every session starts in browsing; switches back if the last one ended in focus.
+    -- Back to browsing mode; reloads Hyprland if the last session ended in focus
     hl.exec_cmd("sleep 2 && ~/.config/quickshell/scripts/mode.sh init &")
 end)
 
@@ -90,9 +89,8 @@ if ok and type(generated) == "table" then
     colors = generated
 end
 
--- Desktop mode, written by ~/.config/quickshell/scripts/mode.sh, which reloads
--- Hyprland after every switch. Browsing: rotating gradient border, translucent
--- windows. Focus: static border, opaque windows, calmer animations.
+-- Desktop mode, written by quickshell/scripts/mode.sh before it reloads Hyprland.
+-- Browsing: gradient border, glass windows. Focus: plain border, opaque windows.
 local mode = "browsing"
 pcall(function()
     local file = io.open(os.getenv("HOME") .. "/.local/state/desktop/mode", "r")
@@ -103,8 +101,7 @@ pcall(function()
 end)
 local focus = mode == "focus"
 
--- Browsing only: mode.sh opaque (SUPER + BackSpace) turns the glass windows opaque.
--- Every login starts with glass (mode.sh init writes "off").
+-- Browsing only: SUPER + BackSpace (mode.sh opaque) makes the glass windows opaque
 local opaque = false
 if not focus then
     pcall(function()
@@ -162,20 +159,19 @@ hl.config({
         force_default_wallpaper = 2,
         disable_hyprland_logo   = true,
         vrr = 0,
-        -- A lock screen started again after its crash (scripts/lock.sh from a TTY)
-        -- may take over the lock, instead of the red "lockscreen died" screen.
+        -- Lets a lock screen restarted from a TTY take over after a crash
         allow_session_lock_restore = true,
     },
 
     cursor = {
-    	no_hardware_cursors = true,
-    	enable_hyprcursor = true,
-    	sync_gsettings_theme = true,	
+        no_hardware_cursors  = true,
+        enable_hyprcursor    = true,
+        sync_gsettings_theme = true,
     },
 })
 
--- Blur behind the bar, the menus and the notifications (in focus not behind the bar).
--- ignore_alpha skips fully transparent pixels so only the panels are blurred.
+-- Blur behind the shell surfaces (the bar only in browsing mode);
+-- ignore_alpha keeps the transparent gaps between panels unblurred.
 local blurred = { "quickshell-notifications", "quickshell-controlcenter", "quickshell-calendar", "quickshell-menu", "quickshell-osd" }
 if not focus then table.insert(blurred, "quickshell-bar") end
 for _, namespace in ipairs(blurred) do
@@ -198,7 +194,7 @@ hl.curve("liner",  { type = "bezier", points = { {0, 0},      {1, 1} } })
 hl.curve("calm",   { type = "bezier", points = { {0.25, 1},   {0.5, 1} } })
 
 if focus then
-    -- Same kinds of motion, shorter, smaller and without overshoot; the border stays still.
+    -- Same motions, shorter and without overshoot; the border stays still
     hl.animation({ leaf = "windows",     enabled = true,  speed = 4, bezier = "calm",  style = "popin 90%" })
     hl.animation({ leaf = "windowsIn",   enabled = true,  speed = 4, bezier = "calm",  style = "popin 90%" })
     hl.animation({ leaf = "windowsOut",  enabled = true,  speed = 3, bezier = "calm",  style = "popin 90%" })
@@ -252,7 +248,7 @@ hl.config({
 
 local mainMod = "SUPER"
 
--- Core Apps & Management
+-- Apps and session
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Q",      hl.dsp.exec_cmd("~/.config/hypr/scripts/close-window.sh"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd(fileManager))
@@ -266,42 +262,37 @@ hl.bind(mainMod .. " + M",      hl.dsp.exit())
 hl.bind(mainMod .. " + CTRL + BackSpace", hl.dsp.exec_cmd("~/.config/quickshell/scripts/mode.sh toggle"))
 hl.bind(mainMod .. " + BackSpace",        hl.dsp.exec_cmd("~/.config/quickshell/scripts/mode.sh opaque toggle"))
 
--- Screenshots (grim + slurp) + Lock Screen + Power menu (Alt F4) + Clipboard history (Alt ,)
-
--- Win + S: Full Screen
+-- Screenshots to the clipboard (full screen, region), lock, power menu, clipboard
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("grim - | wl-copy --type image/png"))
--- Win + Shift + S: User Defined
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy --type image/png"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("~/.config/quickshell/scripts/lock.sh"))
 hl.bind("ALT + F4", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
--- Without Fn the laptop F4 key sends XF86AudioMicMute, so ALT + F4 arrives as ALT + XF86AudioMicMute
+-- Without Fn the laptop F4 key sends XF86AudioMicMute
 hl.bind("ALT + XF86AudioMicMute", hl.dsp.exec_cmd("qs ipc call menu toggle power"))
 hl.bind("ALT + comma", hl.dsp.exec_cmd("qs ipc call menu toggle clipboard"))
 
--- Focus with Arrow Keys
+-- Focus
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
--- Wallpaper Changing
+-- Wallpaper picker and workspace overview
 hl.bind("SUPER + W", hl.dsp.exec_cmd("qs ipc call menu toggle wallpaper"))
-
--- Workspace overview
 hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("qs ipc call menu toggle overview"))
 
--- Workspaces Navigation & Window Moving
+-- Workspaces 1-10 (key 0 is 10): go there, or move the window there
 for i = 1, 10 do
     local key = i % 10
     hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
--- Mouse Dragging & Resizing
+-- Move and resize windows with the mouse
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- Hardware / Media Keys
+-- Volume, brightness and media keys
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
@@ -332,7 +323,7 @@ hl.window_rule({
     no_focus = true,
 })
 
--- Video, images, documents, the browser and Spotify stay fully opaque in every mode.
+-- Video, images, documents, the browser and Spotify stay opaque in every mode
 hl.window_rule({
     name    = "always-opaque",
     match   = { class = [[^(mpv|org\.gnome\.Loupe|org\.gnome\.Evince|evince|ONLYOFFICE|DesktopEditors|firefox|[Ss]potify)$]] },
