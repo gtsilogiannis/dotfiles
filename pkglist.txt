@@ -71,6 +71,8 @@ resvg
 ripgrep
 sbctl
 sddm
+shellcheck
+shfmt
 slurp
 spotify-launcher
 starship
