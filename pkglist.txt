@@ -80,7 +80,6 @@ tcpdump
 thermald
 ttf-caladea
 ttf-ibm-plex
-ttf-jetbrains-mono-nerd
 ttf-material-symbols-variable
 unzip
 usbutils
