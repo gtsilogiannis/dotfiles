@@ -1,5 +1,4 @@
-# matugen: generates the color files every themed app imports.
-# The generated files live next to each app's config and are not tracked.
+# Color files for every themed app; the outputs are generated, not tracked
 
 [config]
 
@@ -21,7 +20,7 @@ output_path = '~/.config/zsh/colors.zsh'
 
 [templates.zed]
 input_path = '~/.config/matugen/templates/zed.json'
-# Zed watches its themes folder and reloads the active theme when this file changes
+# No post_hook: Zed reloads the theme when the file changes
 output_path = '~/.config/zed/themes/gtsilos.json'
 
 [templates.yazi]
@@ -39,5 +38,5 @@ output_path = '~/.config/gtk-3.0/colors.css'
 [templates.gtk4]
 input_path = '~/.config/matugen/templates/gtk.css'
 output_path = '~/.config/gtk-4.0/colors.css'
-# Follow the generated mode (dark or light): Firefox and GTK4 apps read color-scheme, GTK3 apps the theme name
+# Firefox and GTK4 follow color-scheme, GTK3 the theme name
 post_hook = 'gsettings set org.gnome.desktop.interface color-scheme prefer-{{mode}}; if [ {{mode}} = dark ]; then gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark; else gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3; fi'
