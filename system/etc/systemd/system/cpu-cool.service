@@ -1,5 +1,5 @@
 [Unit]
-Description=Disable Intel Turbo Boost & Optimize EPP
+Description=Set the CPU energy preference to balance_power
 After=multi-user.target
 
 [Service]
