@@ -26,7 +26,7 @@ Singleton {
         else if (!(root.closedName === name && Date.now() - root.closedAt < 300)) root.open = name;
     }
 
-    // qs ipc call menu toggle launcher   (keybinds in hyprland.lua)
+    // qs ipc call menu toggle launcher   (keybinds in hypr/modules/binds.lua)
     IpcHandler {
         target: "menu"
         function toggle(name: string): void { root.toggle(name); }

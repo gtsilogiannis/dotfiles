@@ -48,7 +48,7 @@ Singleton {
         else root.page = "main";
     }
 
-    // qs ipc call controlcenter toggle   (bound to SUPER + N in hyprland.lua)
+    // qs ipc call controlcenter toggle   (bound to SUPER + N in hypr/modules/binds.lua)
     IpcHandler {
         target: "controlcenter"
         function toggle(): void { root.toggle(); }

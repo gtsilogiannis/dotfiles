@@ -1,5 +1,5 @@
 #!/bin/sh
-# Volume pill: toggles pavucontrol; its window rule is in hyprland.lua
+# Volume pill: toggles pavucontrol; its window rule is in hypr/modules/rules.lua
 if pgrep -x pavucontrol >/dev/null; then
     pkill -x pavucontrol
 else
