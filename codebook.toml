@@ -1,0 +1,37 @@
+dictionaries = ["en_us"]
+
+ignore_paths = ["pkglist*.txt", "desktop/**", "mime/**"]
+
+# Command line flags inside strings, e.g. -Qtdq, --noconfirm
+ignore_patterns = ['\s--?[A-Za-z][\w-]*']
+
+words = [
+    # Desktop, Wayland and Quickshell
+    "awww", "bibata", "borderangle", "cliphist", "controlcenter", "dpms",
+    "hypr", "hyprcursor", "hyprctl", "hypridle", "hyprland", "hyprpolkitagent",
+    "hyprsunset", "layershell", "mpris", "mpvpaper", "popin", "quickshell",
+    "screencopy", "slidefade", "switchxkblayout", "togglesplit", "toplevel",
+    "toplevels", "vrr", "wlr", "xcursor", "xrgb", "xwayland",
+    # Theme and fonts
+    "adw", "antialias", "calt", "catppuccin", "gtsilos", "hintslight",
+    "hintstyle", "lcddefault", "lcdfilter", "libadwaita", "matugen", "opsz",
+    "plex", "roboto", "tnum", "wdth", "wght",
+    # Apps and tools
+    "birefnet", "brightnessctl", "btop", "clangd", "codebook", "eza",
+    "fastfetch", "ffprobe", "fzf", "gsettings", "loginctl", "nmcli",
+    "paccache", "pavucontrol", "pkexec", "playerctl", "qmlls", "rembg", "sddm",
+    "taplo", "vesktop", "wpctl", "yay", "yazi", "zoxide",
+    # zsh
+    "autosuggest", "bindkey", "compinit", "fpath", "histfile", "histsize",
+    "preexec", "savehist", "setopt", "trapwinch", "unfunction", "zcompdump",
+    "zle", "zstyle",
+    # Hardware and system
+    "acpi", "coretemp", "faillock", "gamezone", "gecos", "hwdec", "hwmon",
+    "ideapad", "initramfs", "iowait", "libva", "modconf", "modeset", "nullok",
+    "prober", "softirq", "sysfs", "uvm", "vaapi", "vconsole", "wmi", "zram",
+    # Code
+    "dddd", "dofile", "hhmm", "mipmap", "mipmaps", "pcall", "reoutput",
+    "retiles", "retiling", "rewraps", "smoothstep", "unblurred", "yyyy",
+    # Names
+    "giannis", "tsilogiannis",
+]
