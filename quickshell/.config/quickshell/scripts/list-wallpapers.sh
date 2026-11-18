@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
-# Lists the wallpapers for the picker. First line: "current<TAB>path" of the
-# wallpaper in use, then one line per file: "type<TAB>path<TAB>thumbnail".
-#
-# The type is the folder under ~/Pictures/wallpapers the file is in (static,
-# depth, video or focus); anything else counts as static. An image is its own
-# thumbnail; a video gets a small cached still taken at 10% of its length.
+# Wallpapers for the picker: "current<TAB>path", then "type<TAB>path<TAB>thumbnail"
+# per file. The type is the folder (static, depth, video, focus); videos get a
+# cached still taken at 10% of their length.
 set -euo pipefail
 
 dir="${1:-$HOME/Pictures/wallpapers}"

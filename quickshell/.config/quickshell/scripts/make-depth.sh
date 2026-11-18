@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Cuts the subject out of a depth wallpaper, so that the desktop layer can
-# draw its widgets between the picture and the subject.
+# Cuts the subject out of a depth wallpaper, so the desktop can draw between them.
 #
 #   make-depth.sh <image>...      make the cutout of each image (skipped when
 #                                 it is newer than the image)
@@ -12,10 +11,8 @@
 #                       in pixels of the image, plus the layout preset of the
 #                       widgets; a new run keeps the preset already there
 #
-# rembg runs in a venv of its own, on a Python that uv manages, so that a
-# Python update of the system never breaks it. The first run creates the venv
-# and downloads the model (birefnet-general, about 1 GB; DEPTH_MODEL picks
-# another rembg model).
+# rembg runs in its own venv on a uv-managed Python, safe from system updates.
+# The first run downloads the model (birefnet-general, ~1 GB; DEPTH_MODEL overrides).
 set -euo pipefail
 
 data="${XDG_DATA_HOME:-$HOME/.local/share}/depth"
@@ -68,13 +65,12 @@ for src in files:
     if session is None:
         session = new_session(os.environ["DEPTH_MODEL"])
 
-    # Upright as the desktop shows it (QML loads it with autoTransform), and
-    # read by content: a JPEG saved as .png works too.
+    # Upright as QML shows it (autoTransform); read by content, not extension
     image = ImageOps.exif_transpose(Image.open(src)).convert("RGB")
-    # decontaminate: takes the background color out of the soft edges (no halo).
+    # decontaminate removes the background color from soft edges (no halo)
     cut = remove(image, session=session, decontaminate=True)
 
-    # Alpha up to 2% is mask noise around the subject, not part of it.
+    # Alpha up to 2% is mask noise
     box = cut.getchannel("A").point(lambda a: 255 if a > 5 else 0).getbbox()
     if box is None:
         print(f"{name}: no subject found", file=sys.stderr)

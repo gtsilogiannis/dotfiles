@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
-# Makes an image the background of the login screen (SDDM), from the
-# wallpaper picker (Shift + Enter in the Static and Depth tabs) or by hand:
+# Sets the login screen background, themed from the image (matugen --dry-run,
+# so the desktop colors stay). The root part is sddm-set-background via pkexec.
 #
-#   set-login-wallpaper.sh <image>   use it (a depth wallpaper without its effect)
-#   set-login-wallpaper.sh --reset   back to the background of the theme
-#
-# The theme follows the image: colors from matugen (scheme-vibrant, dark, as
-# in browsing mode; --dry-run, so the desktop colors stay), IBM Plex Sans, and
-# the form on the side away from the subject. For a depth wallpaper the side
-# comes from its cutout, else from the half with less detail (form-side.sh).
-#
-# The root part is /usr/local/bin/sddm-set-background, run through pkexec
-# (password prompt by hyprpolkitagent). It reads the image on stdin and takes
-# the theme keys as arguments. On success the path is kept in
-# ~/.local/state/desktop/login-wallpaper for the badge in the picker.
+#   set-login-wallpaper.sh <image>   use it (depth wallpapers without the effect)
+#   set-login-wallpaper.sh --reset   back to the theme background
 set -euo pipefail
 
 helper=/usr/local/bin/sddm-set-background

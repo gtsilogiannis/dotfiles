@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Switches the desktop between the browsing and focus modes.
+# Switches the desktop between browsing and focus modes.
 #
 #   mode.sh browsing | focus | toggle   switch (focus turns Do Not Disturb on)
 #   mode.sh opaque on | off | toggle    browsing only: opaque instead of glass windows

@@ -1,8 +1,5 @@
-// Lock screen: its own qs instance, started by scripts/lock.sh and gone
-// once unlocked. One LockScreen per screen (ext-session-lock through
-// WlSessionLock), the password checked by PAM with pam/password.conf.
-// Colors from the matugen file of the shell, the background from the
-// still of the current wallpaper, the form side from set-wallpaper.sh.
+// Lock screen in its own qs instance (scripts/lock.sh), gone once unlocked.
+// ext-session-lock through WlSessionLock, password checked by PAM.
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -141,9 +138,8 @@ ShellRoot {
         }
     }
 
-    // Caps Lock, read again after every key press and release (the release
-    // of Caps Lock itself comes after the change). On if any keyboard has it:
-    // the main one is the last one used, not always the one typed on.
+    // Re-read after every key press and release; on if any keyboard has it,
+    // since the main keyboard is not always the one typed on
     Process {
         id: caps
         property bool again: false

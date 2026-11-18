@@ -1,7 +1,5 @@
-// What one screen of the lock shows, the same layout as the login screen
-// (SDDM theme gtsilos): the wallpaper, the side away from its subject blurred
-// with a soft fade, and on it the clock, the user and the password field.
-// State lives in shell.qml; every screen shows the same password text.
+// One screen of the lock, laid out like the login screen. State lives in
+// shell.qml, so every screen shows the same password text.
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Controls.Basic
@@ -45,7 +43,7 @@ Item {
 
     property date now: new Date()
 
-    // 0 → 1 once at start: blur and form fade in over the sharp wallpaper.
+    // Blur and form fade in once, over the sharp wallpaper
     property real reveal
     NumberAnimation on reveal { from: 0; to: 1; duration: 300; easing.type: Easing.OutCubic }
 

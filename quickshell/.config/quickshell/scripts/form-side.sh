@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-# Prints "left" or "right": the side of an image away from its subject, where
-# the login screen (set-login-wallpaper.sh) and the lock screen
-# (set-wallpaper.sh, lock/shell.qml) put their form.
+# Prints the side of an image away from its subject (left or right), where the
+# login and lock screens put their form.
 #
 #   form-side.sh <image>
 #
-# For a depth wallpaper the side comes from its cutout (.depth.json), else
-# from the half with less detail (edge energy).
+# Depth wallpapers use their cutout; others the half with less edge energy.
 set -euo pipefail
 
 file="${1:?usage: form-side.sh <image>}"

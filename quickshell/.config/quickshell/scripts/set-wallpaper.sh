@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Applies a wallpaper chosen in the wallpaper picker or by mode.sh, and takes
-# new colors from it with matugen for every themed app (Hyprland borders,
-# kitty, GTK, Quickshell).
+# Applies a wallpaper and regenerates the colors of every themed app with matugen.
 #
 #   set-wallpaper.sh <image|video>   apply it
 #   set-wallpaper.sh --resume        at login: play the current wallpaper
@@ -9,12 +7,9 @@
 #   set-wallpaper.sh --reoutput      after a monitor change: move the video
 #                                    to the output that should play it
 #
-# An image is shown by awww on every output. A video is played by mpvpaper on
-# one output only, the external monitor if one is connected and the laptop
-# panel otherwise, above a still of its first frame: awww shows that still on
-# every output, the lock screen uses it and the next login starts with it. One output
-# means one decoder. The colors of a video come from a frame
-# at 10% of its length. Focus mode shows the still only.
+# Images go through awww on every output. A video plays with mpvpaper on one
+# output (one decoder), the external monitor if any, over a still of its first
+# frame that the other outputs and the lock screen show. Focus mode shows the still.
 set -euo pipefail
 
 state="$HOME/.local/state/desktop"
@@ -24,8 +19,7 @@ sidefile="$HOME/.cache/current_wallpaper.side"
 scripts=$(dirname -- "$0")
 pathfile="$HOME/.cache/current_wallpaper.path"
 frames="$HOME/.cache/wallpaper-frames"
-# Output that plays the video, read by Quickshell (VideoWallpaper.qml); empty
-# while none plays. Always rewritten in place, so its file watcher survives.
+# Output that plays the video, or empty; rewritten in place for the file watcher
 outfile="${XDG_RUNTIME_DIR:-/tmp}/mpvpaper.output"
 
 is_video() {
@@ -47,12 +41,8 @@ video_output() {
         map(.name) | (map(select(startswith("eDP") | not)) + .) | first // empty' 2>/dev/null
 }
 
-# mpv decodes on the integrated GPU, the one that also draws the wallpaper
-# (VA-API, no copy), and falls back to software decoding if that fails.
-# Hyprland exports LIBVA_DRIVER_NAME=nvidia for everything else. Quickshell
-# (VideoWallpaper.qml) pauses the video through the socket while the workspace
-# on its output has windows, and is told here that a new mpv is listening. mode.sh holds its lock
-# on descriptor 9, which a daemon must not inherit.
+# VA-API on the iGPU that draws the wallpaper (Hyprland sets nvidia for the rest),
+# software decoding as fallback. The daemon must not inherit mode.sh's lock on fd 9.
 start_video() {
     local output
     stop_video
@@ -125,8 +115,7 @@ fi
 wall="${1:-}"
 [[ -f "$wall" ]] || { echo "not a file: $wall" >&2; exit 1; }
 
-# The color scheme follows the desktop mode (mode.sh): vibrant in browsing,
-# monochrome in focus. Both stay dark for now.
+# Vibrant in browsing, monochrome in focus, dark in both
 mode=$(cat "$state/mode" 2>/dev/null || echo browsing)
 case "$mode" in
     focus) scheme="scheme-monochrome" ;;
@@ -143,9 +132,8 @@ if is_video "$wall"; then
     [[ "$mode" == focus ]] || video="$wall"
 fi
 
-# A mode switch that keeps the wallpaper only changes the colors. The cached
-# copy itself (mode.sh's fallback when no source path is known) is never
-# recorded as a source, or a later wallpaper change would overwrite it.
+# Same wallpaper on a mode switch: only the colors change. The cached copy is
+# never recorded as a source, or a later change would overwrite it.
 current=$(cat "$pathfile" 2>/dev/null || true)
 is_cache=0
 [[ "$wall" -ef "$cache" ]] && is_cache=1
@@ -153,13 +141,12 @@ if [[ $is_cache -eq 0 && "$wall" != "$current" ]]; then
     stop_video
     show_image "$still"
 
-    # Read at login (autostart) and by the lock screen; the .path file marks the current one in the picker.
+    # Read at login and by the lock screen; .path marks it in the picker
     mkdir -p "$HOME/.cache"
     cp -f "$still" "$cache"
     printf '%s\n' "$wall" > "$pathfile"
 
-    # The video starts once awww has finished growing its first frame, unless
-    # another wallpaper or focus mode has taken over in the meantime.
+    # Start once awww has grown the first frame, unless something took over since
     if [[ -n "$video" ]]; then
         (
             sleep 1.3
@@ -187,5 +174,5 @@ if [[ $is_cache -eq 0 ]]; then
     printf '%s\n' "$wall" > "$state/wallpaper-$mode"
 fi
 
-# --source-color-index 0: without it matugen asks interactively which color to use.
+# Without --source-color-index matugen asks which color to use
 matugen image "$colors" -t "$scheme" -m dark --source-color-index 0
