@@ -28,6 +28,7 @@ ffmpegthumbnailer
 firefox
 fzf
 git
+github-cli
 gnome-keyring
 grim
 grub
