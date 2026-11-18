@@ -323,6 +323,16 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- pavucontrol, opened from the bar volume pill: a small panel under the bar
+hl.window_rule({
+    name  = "pavucontrol-panel",
+    match = { class = [[^(pavucontrol|org\.pulseaudio\.pavucontrol)$]] },
+    float = true,
+    pin   = true,
+    size  = { 640, 450 },
+    move  = { "monitor_w-655", "42" },
+})
+
 -- Video, images, documents, the browser and Spotify stay opaque in every mode
 hl.window_rule({
     name    = "always-opaque",

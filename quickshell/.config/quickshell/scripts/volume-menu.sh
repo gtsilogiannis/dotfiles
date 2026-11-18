@@ -1,11 +1,7 @@
-#!/bin/bash
-if pgrep -x "pavucontrol" > /dev/null; then
-    killall pavucontrol
+#!/bin/sh
+# Volume pill: toggles pavucontrol; its window rule is in hyprland.lua
+if pgrep -x pavucontrol >/dev/null; then
+    pkill -x pavucontrol
 else
-    hyprctl keyword windowrulev2 "float, class:^(pavucontrol|org.pulseaudio.pavucontrol)$"
-    hyprctl keyword windowrulev2 "size 640 450, class:^(pavucontrol|org.pulseaudio.pavucontrol)$"
-    hyprctl keyword windowrulev2 "move 100%-655 42, class:^(pavucontrol|org.pulseaudio.pavucontrol)$"
-    hyprctl keyword windowrulev2 "pin, class:^(pavucontrol|org.pulseaudio.pavucontrol)$"
-
-    pavucontrol &
+    pavucontrol >/dev/null 2>&1 &
 fi
