@@ -144,7 +144,7 @@ alias sv="sudo micro"
 alias up='yay && qs ipc call stats refreshUpdates'
 
 # Remove orphans, old package caches, old logs, thumbnails and trash
-alias sysclean='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null; sudo paccache -rk1; sudo paccache -ruk0; yay -Sc --aur --noconfirm; sudo journalctl --vacuum-size=50M; rm -rf ~/.cache/thumbnails/* ~/.local/share/Trash/*; echo "System Cleaned Successfully"'
+alias sysclean='sudo pacman -Rns $(pacman -Qtdq) 2>/dev/null; sudo paccache -rk1; sudo paccache -ruk0; yay -Sc --aur --noconfirm; sudo journalctl --vacuum-size=50M; rm -rf ~/.cache/thumbnails ~/.local/share/Trash; echo "System Cleaned Successfully"'
 
 # FPL optimizer project
 alias fpl='cd ~/FPL && source venv/bin/activate'
