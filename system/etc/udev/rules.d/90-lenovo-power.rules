@@ -1,8 +1,5 @@
-# Let the wheel group switch the battery conservation mode (ideapad_acpi) and
-# the platform profile (lenovo-wmi-gamezone) without sudo, so the shell can
-# toggle them from the control center.
-# Install: sudo cp to /etc/udev/rules.d/, then udevadm control --reload and
-# udevadm trigger for the platform and platform-profile subsystems.
+# Let the wheel group switch battery conservation (ideapad_acpi) and the
+# platform profile (lenovo-wmi-gamezone) from the control center, without sudo.
 
 ACTION=="add|bind", SUBSYSTEM=="platform", DRIVER=="ideapad_acpi", TEST=="conservation_mode", RUN+="/usr/bin/chgrp wheel /sys%p/conservation_mode", RUN+="/usr/bin/chmod g+w /sys%p/conservation_mode"
 

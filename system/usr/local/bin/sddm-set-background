@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
-# Sets the background of the SDDM login screen (theme gtsilos). Runs as
-# root, through pkexec from ~/.config/quickshell/scripts/set-login-wallpaper.sh.
+# Sets the SDDM login background (theme gtsilos). Runs as root through pkexec,
+# called by ~/.config/quickshell/scripts/set-login-wallpaper.sh.
 #
-#   sddm-set-background [Key=Value ...] < <image>
-#                                    use the PNG or JPEG read from stdin, and
-#                                    the given theme keys (colors, font, form)
-#   sddm-set-background --reset      back to the background of the theme
+#   sddm-set-background [Key=Value ...] < image   PNG or JPEG on stdin, plus theme keys
+#   sddm-set-background --reset                   back to the theme background
 #
-# Only these keys are accepted, each with a checked value: *Color (#RRGGBB),
-# Font (letters, digits, spaces), FormPosition (left, right), RoundCorners
-# (0-99), Blur (0.0-1.0, strength of the MultiEffect blur), BlurMax (1-64,
-# its radius).
+# Accepted keys: *Color (#RRGGBB), Font (letters, digits, spaces),
+# FormPosition (left|right), RoundCorners (0-99), Blur (0.0-1.0), BlurMax (1-64).
 #
 # The image comes on stdin, so root never opens a path chosen by the caller.
-# It is copied to /usr/local/share/sddm/, which the sddm user can read (it
-# cannot read home directories), and the theme is pointed at it with
-# <ConfigFile>.user next to the theme config: SDDM reads that file after the
-# config and its keys win. The theme files (system/usr/share/sddm/themes/gtsilos
-# in the repo) stay untouched, so reinstalling them keeps the override.
-# Installed with sudo install, not Stow.
+# It is copied to /usr/local/share/sddm/ (sddm cannot read home folders) and
+# theme.conf.user points the theme at it, so the installed theme stays untouched.
 set -euo pipefail
 
 theme=/usr/share/sddm/themes/gtsilos

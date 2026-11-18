@@ -1,7 +1,5 @@
-// SDDM greeter theme (Qt 6): the wallpaper, one side blurred with a soft fade
-// towards the subject, and on it the clock, the user and the password field.
-// Keys come from theme.conf, overridden by theme.conf.user (written by
-// /usr/local/bin/sddm-set-background from the wallpaper picker).
+// SDDM greeter (Qt 6): the wallpaper with one side blurred, holding the clock,
+// user and password field. theme.conf.user (sddm-set-background) overrides theme.conf.
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Controls.Basic
