@@ -57,7 +57,7 @@ A video plays with mpvpaper on **one** output (the external monitor if there is 
 - **Browsing:** glass windows with blur, gradient borders, the full wallpaper (depth and video included).
 - **Focus:** opaque windows, plain borders, its own wallpaper and color scheme, Do Not Disturb on (and back to how it was afterwards).
 
-Each mode remembers its last wallpaper. `SUPER + BackSpace` makes the windows opaque in browsing as well. The state lives in `~/.local/state/desktop/` and both Hyprland (`modules/mode.lua`) and Quickshell read it.
+Each mode remembers its last wallpaper. `SUPER + BackSpace` switches the windows between glass and opaque in browsing. The state lives in `~/.local/state/desktop/` and both Hyprland (`modules/mode.lua`) and Quickshell read it.
 
 ### Lock screen
 
@@ -161,7 +161,7 @@ All binds are in [`binds.lua`](hypr/.config/hypr/modules/binds.lua).
 
 | Keys | Action |
 |---|---|
-| `SUPER + RETURN` | kitty |
+| `SUPER + Enter` | kitty |
 | `SUPER + SPACE` | launcher |
 | `SUPER + B` | Firefox |
 | `SUPER + D` / `SUPER + SHIFT + D` | Nautilus / yazi |
@@ -186,7 +186,7 @@ All binds are in [`binds.lua`](hypr/.config/hypr/modules/binds.lua).
 | Keys | Action |
 |---|---|
 | `SUPER + CTRL + BackSpace` | browsing / focus mode |
-| `SUPER + BackSpace` | opaque windows (browsing) |
+| `SUPER + BackSpace` | glass / opaque windows (browsing) |
 | `SUPER + S` / `SUPER + SHIFT + S` | screenshot of the screen / a region to the clipboard |
 | `SUPER + L` | lock |
 | `ALT + F4` | power menu |
