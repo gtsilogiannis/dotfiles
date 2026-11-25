@@ -2,7 +2,7 @@
 Name=gtsilos
 Description=Wallpaper with a blurred side that fades in, clock, user and password
 Author=Giannis Tsilogiannis
-License=MIT
+License=GPL-3.0-or-later
 Type=sddm-theme
 Version=1.0
 MainScript=Main.qml
