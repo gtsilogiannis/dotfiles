@@ -1,0 +1,79 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y shellcheck lua-check python3-json5
+
+      - name: shellcheck
+        run: |
+          mapfile -t files < <(git ls-files | while read -r f; do
+            head -n1 "$f" | grep -qE '^#!.*\b(ba)?sh$' && echo "$f"
+          done)
+          printf '%s\n' "${files[@]}"
+          shellcheck "${files[@]}"
+
+      - name: luacheck
+        run: luacheck hypr matugen/.config/matugen/templates/hyprland.lua
+
+      - name: JSON and TOML
+        run: |
+          python3 - <<'EOF'
+          import json, subprocess, sys, tomllib
+          import json5
+
+          failed = False
+          for path in subprocess.run(["git", "ls-files"], capture_output=True, text=True).stdout.split():
+              try:
+                  if path.endswith(".toml"):
+                      tomllib.loads(open(path).read())
+                  elif path.endswith(".jsonc") or path == "zed/.config/zed/settings.json":
+                      json5.loads(open(path).read())
+                  elif path.endswith(".json"):
+                      json.loads(open(path).read())
+                  else:
+                      continue
+                  print("ok  ", path)
+              except Exception as e:
+                  print("FAIL", path, e)
+                  failed = True
+          sys.exit(failed)
+          EOF
+
+  qmllint:
+    runs-on: ubuntu-24.04
+    container: archlinux:latest
+    steps:
+      # Arch ships the Quickshell QML types, so imports resolve like on the desktop
+      - name: Install Quickshell and Qt
+        run: pacman -Syu --noconfirm --needed git quickshell qt6-declarative
+
+      - uses: actions/checkout@v7
+
+      # Warnings are printed but only syntax errors fail the job: singletons and
+      # some Quickshell types are only resolved at runtime
+      - name: qmllint
+        run: find quickshell system -name '*.qml' -print0 | xargs -0 /usr/lib/qt6/bin/qmllint
+
+  gitleaks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
